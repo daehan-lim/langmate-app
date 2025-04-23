@@ -5,6 +5,9 @@ class User {
   final String? profileImage;
   final String? nativeLanguage;
   final String? targetLanguage;
+  final String? bio;
+  final int? age;
+  final String? idealPartnerDescription;
 
   User({
     required this.id,
@@ -13,5 +16,8 @@ class User {
     this.profileImage,
     this.nativeLanguage,
     this.targetLanguage,
+    this.bio,
+    this.age,
+    this.idealPartnerDescription
   });
 }
