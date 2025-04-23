@@ -7,7 +7,7 @@ class User {
   final String? targetLanguage;
   final String? bio;
   final int? age;
-  final String? idealPartnerDescription;
+  final String? partnerPreference;
   // final GeoPoint? location;
 
   User({
@@ -19,6 +19,6 @@ class User {
     this.targetLanguage,
     this.bio,
     this.age,
-    this.idealPartnerDescription
+    this.partnerPreference
   });
 }
