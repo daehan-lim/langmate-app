@@ -3,8 +3,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/repository/location_repository.dart';
 import '../ui/pages/chat/chat_view_model.dart';
-import '../ui/pages/home/welcome/welcome_view_model.dart';
 import '../ui/pages/home/home_view_model.dart';
+import '../ui/pages/welcome/welcome_view_model.dart';
 
 /// 앱에서 사용되는 공통 프로바이더들을 모아둡니다.
 /// 이 파일을 통해 앱 전체에서 사용되는 프로바이더를 쉽게 관리할 수 있습니다.
