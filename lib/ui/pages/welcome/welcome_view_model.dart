@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/utils/geolocator_util.dart';
-import '../../../../../data/repository/location_repository.dart';
 import '../../../../../app/app_providers.dart';
 
 // 환영 페이지의 상태를 관리하는 클래스
