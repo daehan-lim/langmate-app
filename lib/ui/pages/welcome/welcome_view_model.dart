@@ -8,8 +8,8 @@ class WelcomeState {
   final String? location;
   final bool isLoading;
   final String? errorMessage;
-  final String? nativeLanguage; //나의언어
-  final String? targetLanguage; //배울언어
+  final String? nativeLanguage; // 나의언어
+  final String? targetLanguage; // 배울언어
 
   const WelcomeState({
     this.username,
@@ -43,8 +43,8 @@ class WelcomeState {
 class WelcomeViewModel extends Notifier<WelcomeState> {
   @override
   WelcomeState build() {
-    // 간단한 초기 상태 반환 - 빈 값으로 시작
-    return const WelcomeState();
+    // 초기 상태 반환
+    return const WelcomeState(nativeLanguage: '한국어', targetLanguage: '영어');
   }
 
   // 사용자 이름 설정
@@ -88,13 +88,13 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
     }
   }
 
+  // 모국어 설정
   void setNativeLanguage(String language) {
     state = state.copyWith(nativeLanguage: language);
   }
 
+  // 배우고자 하는 언어 설정
   void setTargetLanguage(String language) {
     state = state.copyWith(targetLanguage: language);
   }
 }
-
-// 프로바이더는 app_providers.dart 파일에서 정의
