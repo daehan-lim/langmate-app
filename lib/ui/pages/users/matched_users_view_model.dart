@@ -8,11 +8,11 @@ class MatchedUsersViewModel extends Notifier<AsyncValue<List<User>>> {
   @override
   AsyncValue<List<User>> build() {
     fetchNearbyUsers();
-    return AsyncData([]);
+    return AsyncLoading();
   }
 
   Future<void> fetchNearbyUsers() async {
-    state = AsyncLoading();
+    // state = AsyncLoading();
     try {
       List<User> users = await ref
           .read(userRepositoryProvider)
