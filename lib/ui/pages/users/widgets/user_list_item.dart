@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lang_mate/app/constants/app_styles.dart';
+import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
 import '../../../../data/model/user.dart';
 
@@ -13,12 +14,20 @@ class UserListItem extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
-          radius: 33,
-          backgroundImage: NetworkImage(
-            user.profileImage ?? 'https://picsum.photos/200/200?random=1',
+        ClipOval(
+          child: AppCachedImage(
+            imageUrl: user.profileImage ?? 'https://picsum.photos/200/200?random=1',
+            width: 66,
+            height: 66,
+            fit: BoxFit.cover,
           ),
         ),
+        // CircleAvatar(
+        //   radius: 33,
+        //   backgroundImage: NetworkImage(
+        //     user.profileImage ?? 'https://picsum.photos/200/200?random=1',
+        //   ),
+        // ),
         const SizedBox(width: 12),
 
         // Info column
