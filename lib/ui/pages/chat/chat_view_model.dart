@@ -1,7 +1,7 @@
 // lib/ui/pages/chat/chat_view_model.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/model/chat_models.dart';
+import '../../../data/model/chat_message.dart';
 
 // 채팅 페이지의 상태를 관리하는 클래스
 class ChatState {

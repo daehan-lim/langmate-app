@@ -1,38 +1,7 @@
 // lib/data/model/chat_models.dart
 
-class User {
-  final String id;
-  final String name;
-  final String? location;
-  final String? profileImage;
-  final String? nativeLanguage;
-  final String? targetLanguage;
 
-  User({
-    required this.id,
-    required this.name,
-    this.location,
-    this.profileImage,
-    this.nativeLanguage,
-    this.targetLanguage,
-  });
-}
 
-class ChatRoom {
-  final String id;
-  final String name;
-  final List<User> participants;
-  final DateTime lastMessageTime;
-  final String? lastMessageText;
-
-  ChatRoom({
-    required this.id,
-    required this.name,
-    required this.participants,
-    required this.lastMessageTime,
-    this.lastMessageText,
-  });
-}
 
 class Message {
   final String id;
@@ -50,17 +19,4 @@ class Message {
   });
 }
 
-// 채팅 페이지에서 사용하는 메시지 타입
-enum MessageType { sent, received }
 
-class ChatMessage {
-  final MessageType type;
-  final String text;
-  final String timestamp;
-
-  ChatMessage({
-    required this.type,
-    required this.text,
-    required this.timestamp,
-  });
-}
