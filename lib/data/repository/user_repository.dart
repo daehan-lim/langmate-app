@@ -1,0 +1,80 @@
+import '../model/user.dart';
+
+abstract class UserRepository {
+  Future<List<User>> getNearbyUsers(String userId, String district);
+}
+
+class UserRepositoryMock implements UserRepository {
+  @override
+  Future<List<User>> getNearbyUsers(String userId, String district) async {
+    await Future.delayed(Duration(seconds: 1));
+    return [
+      User(
+        id: '1',
+        name: '민수',
+        district: '서울특별시 은평구 불광동',
+        profileImage: 'https://picsum.photos/200/200?random=1',
+        nativeLanguage: 'Korean',
+        targetLanguage: 'English',
+        bio: '여행과 새로운 언어 배우기를 좋아합니다.',
+        age: 25,
+        idealPartnerDescription: '가벼운 대화를 즐기는 분이면 좋겠어요.',
+      ),
+      User(
+        id: '2',
+        name: '소영',
+        district: '서울특별시 강남구 역삼동',
+        profileImage: 'https://picsum.photos/200/200?random=2',
+        nativeLanguage: 'Korean',
+        targetLanguage: 'Japanese',
+        bio: '맛집 탐방을 좋아하며 일본어 실력을 키우고 싶어요.',
+        age: 30,
+        idealPartnerDescription: '친절하고 인내심 있는 언어 파트너를 원합니다.',
+      ),
+      User(
+        id: '3',
+        name: '다니엘',
+        district: '부산광역시 해운대구 우동',
+        profileImage: 'https://picsum.photos/200/200?random=3',
+        nativeLanguage: 'English',
+        targetLanguage: 'Korean',
+        bio: '애니메이션을 좋아하는 언어 학습자입니다.',
+        age: 22,
+        idealPartnerDescription: '비슷한 관심사를 가진 분을 찾고 있어요.',
+      ),
+      User(
+        id: '4',
+        name: '지민',
+        district: '대구광역시 수성구 범어동',
+        profileImage: 'https://picsum.photos/200/200?random=4',
+        nativeLanguage: 'Korean',
+        targetLanguage: 'Chinese',
+        bio: '중국어를 연습하고 싶은 학생입니다.',
+        age: 28,
+        idealPartnerDescription: '깊이 있는 대화를 즐기는 분이면 좋겠어요.',
+      ),
+      User(
+        id: '5',
+        name: '유키',
+        district: '인천광역시 연수구 송도동',
+        profileImage: 'https://picsum.photos/200/200?random=5',
+        nativeLanguage: 'Japanese',
+        targetLanguage: 'Korean',
+        bio: '기술에 관심이 많고 새로운 문화를 탐험하고 싶어요.',
+        age: 35,
+        idealPartnerDescription: '기술에 열정적인 분을 만나고 싶습니다.',
+      ),
+      User(
+        id: '6',
+        name: '리우',
+        district: '경기도 성남시 분당구 정자동',
+        profileImage: 'https://picsum.photos/200/200?random=6',
+        nativeLanguage: 'Chinese',
+        targetLanguage: 'Korean',
+        bio: '유학 준비 중인 학생입니다.',
+        age: 20,
+        idealPartnerDescription: '학문적인 한국어를 도와줄 수 있는 분을 찾고 있어요.',
+      ),
+    ];
+  }
+}

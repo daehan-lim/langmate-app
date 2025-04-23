@@ -1,6 +1,7 @@
 // lib/app/app_providers.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/data/repository/user_repository.dart';
 import '../data/repository/location_repository.dart';
 import '../ui/pages/chat/chat_view_model.dart';
 import '../ui/pages/home/home_view_model.dart';
@@ -12,6 +13,10 @@ import '../ui/pages/welcome/welcome_view_model.dart';
 // 위치 저장소 프로바이더 - 다른 프로바이더보다 먼저 정의
 final locationRepositoryProvider = Provider<LocationRepository>((ref) {
   return LocationRepositoryImpl();
+});
+
+final userRepositoryProvider = Provider<UserRepository>((ref) {
+  return UserRepositoryMock();
 });
 
 // 홈 화면 관련 프로바이더
