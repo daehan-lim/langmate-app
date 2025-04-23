@@ -136,6 +136,12 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                               welcomeState.location ??
                                               '서울시 강남구',
                                         ),
+                                    // (context) => ChatPage(
+                                    //   username: _usernameController.text,
+                                    //   location:
+                                    //       welcomeState.location ??
+                                    //       '서울시 강남구',
+                                    // ),
                                   ),
                                 );
                               }
