@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import '../../../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
 import 'package:lang_mate/ui/pages/chat/chat_page.dart';
@@ -201,6 +202,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
+                                      //builder: (context) => MatchedUsersPage(),
                                       builder:
                                           (context) => ChatPage(
                                             username: _usernameController.text,
