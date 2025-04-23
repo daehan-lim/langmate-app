@@ -7,13 +7,16 @@ import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import 'package:lang_mate/ui/pages/welcome/welcome_page.dart';
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
+import 'firebase_options.dart';
 import 'ui/pages/auth/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Firebase 초기화
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // from flutterfire configure
+  );
 
   try {
     await dotenv.load(fileName: '.env');
