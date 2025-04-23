@@ -7,9 +7,16 @@ import 'chat_view_model.dart';
 class ChatPage extends ConsumerStatefulWidget {
   final String username;
   final String location;
+  final String nativeLanguage;
+  final String targetLanguage;
 
-  const ChatPage({Key? key, required this.username, required this.location})
-    : super(key: key);
+  const ChatPage({
+    Key? key,
+    required this.username,
+    required this.location,
+    required this.nativeLanguage,
+    required this.targetLanguage,
+  }) : super(key: key);
 
   @override
   ChatPageState createState() => ChatPageState();

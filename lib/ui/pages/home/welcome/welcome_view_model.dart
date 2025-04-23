@@ -9,12 +9,16 @@ class WelcomeState {
   final String? location;
   final bool isLoading;
   final String? errorMessage;
+  final String? nativeLanguage; //나의언어
+  final String? targetLanguage; //배울언어
 
   const WelcomeState({
     this.username,
     this.location,
     this.isLoading = false,
     this.errorMessage,
+    this.nativeLanguage,
+    this.targetLanguage,
   });
 
   WelcomeState copyWith({
@@ -22,12 +26,16 @@ class WelcomeState {
     String? location,
     bool? isLoading,
     String? errorMessage,
+    String? nativeLanguage,
+    String? targetLanguage,
   }) {
     return WelcomeState(
       username: username ?? this.username,
       location: location ?? this.location,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage, // 에러 메시지는 null로 재설정할 수 있도록 ?? 연산자 사용하지 않음
+      nativeLanguage: nativeLanguage ?? this.nativeLanguage,
+      targetLanguage: targetLanguage ?? this.targetLanguage,
     );
   }
 }
@@ -79,6 +87,14 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
         errorMessage: '위치 정보를 가져오는 중 오류가 발생했습니다: ${e.toString()}',
       );
     }
+  }
+
+  void setNativeLanguage(String language) {
+    state = state.copyWith(nativeLanguage: language);
+  }
+
+  void setTargetLanguage(String language) {
+    state = state.copyWith(targetLanguage: language);
   }
 }
 
