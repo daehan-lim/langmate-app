@@ -18,7 +18,7 @@ class UserRepositoryMock implements UserRepository {
         targetLanguage: 'English',
         bio: '여행과 새로운 언어 배우기를 좋아합니다.',
         age: 25,
-        idealPartnerDescription: '가벼운 대화를 즐기는 분이면 좋겠어요.',
+        partnerPreference: '가벼운 대화를 즐기는 분이면 좋겠어요.',
       ),
       User(
         id: '2',
@@ -29,7 +29,7 @@ class UserRepositoryMock implements UserRepository {
         targetLanguage: 'Japanese',
         bio: '맛집 탐방을 좋아하며 일본어 실력을 키우고 싶어요.',
         age: 30,
-        idealPartnerDescription: '친절하고 인내심 있는 언어 파트너를 원합니다.',
+        partnerPreference: '친절하고 인내심 있는 언어 파트너를 원합니다.',
       ),
       User(
         id: '3',
@@ -40,7 +40,7 @@ class UserRepositoryMock implements UserRepository {
         targetLanguage: 'Korean',
         bio: '애니메이션을 좋아하는 언어 학습자입니다.',
         age: 22,
-        idealPartnerDescription: '비슷한 관심사를 가진 분을 찾고 있어요.',
+        partnerPreference: '비슷한 관심사를 가진 분을 찾고 있어요.',
       ),
       User(
         id: '4',
@@ -51,7 +51,7 @@ class UserRepositoryMock implements UserRepository {
         targetLanguage: 'Chinese',
         bio: '중국어를 연습하고 싶은 학생입니다.',
         age: 28,
-        idealPartnerDescription: '깊이 있는 대화를 즐기는 분이면 좋겠어요.',
+        partnerPreference: '깊이 있는 대화를 즐기는 분이면 좋겠어요.',
       ),
       User(
         id: '5',
@@ -62,7 +62,7 @@ class UserRepositoryMock implements UserRepository {
         targetLanguage: 'Korean',
         bio: '기술에 관심이 많고 새로운 문화를 탐험하고 싶어요.',
         age: 35,
-        idealPartnerDescription: '기술에 열정적인 분을 만나고 싶습니다.',
+        partnerPreference: '기술에 열정적인 분을 만나고 싶습니다.',
       ),
       User(
         id: '6',
@@ -73,7 +73,7 @@ class UserRepositoryMock implements UserRepository {
         targetLanguage: 'Korean',
         bio: '유학 준비 중인 학생입니다.',
         age: 20,
-        idealPartnerDescription: '학문적인 한국어를 도와줄 수 있는 분을 찾고 있어요.',
+        partnerPreference: '학문적인 한국어를 도와줄 수 있는 분을 찾고 있어요.',
       ),
     ];
   }
