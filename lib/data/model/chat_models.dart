@@ -1,8 +1,3 @@
-// lib/data/model/chat_models.dart
-
-
-
-
 class Message {
   final String id;
   final String senderId;
@@ -18,5 +13,3 @@ class Message {
     this.isRead = false,
   });
 }
-
-
