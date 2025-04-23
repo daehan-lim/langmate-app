@@ -1,0 +1,133 @@
+# ----------------------------------------
+# Dart & Flutter
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+.melos_tool/
+
+# Plugin registrant (may be generated in lib/)
+lib/generated_plugin_registrant.dart
+
+# Flutter specific
+.env
+**/doc/api/
+**/ios/Flutter/.last_build_id
+
+# ----------------------------------------
+# Platform: Android
+android/.gradle/
+android/.idea/
+android/local.properties
+android/captures/
+*.jks
+.gradle/
+*.apk
+*.ap_
+*.dex
+.externalNativeBuild/
+.cxx/
+
+# Android build output
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# ----------------------------------------
+# Platform: iOS & macOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/Debug.xcconfig
+ios/Flutter/Release.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/ephemeral/
+ios/Flutter/app.* # old assets
+ios/Flutter/flutter_assets/
+ios/Pods/
+ios/.symlinks/
+ios/Runner.xcworkspace/
+ios/DerivedData/
+ios/xcuserdata/
+
+macos/Flutter/ephemeral/
+macos/Pods/
+macos/.symlinks/
+macos/xcuserdata/
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/Flutter-Debug.xcconfig
+macos/Flutter/Flutter-Release.xcconfig
+macos/Flutter/Generated.xcconfig
+
+# Xcode specific
+**/*.xcodeproj/project.xcworkspace/
+**/*.xcuserdata/
+**/*.xcuserstate
+**/*.pbxuser
+**/*.mode1v3
+**/*.mode2v3
+**/*.perspectivev3
+
+# ----------------------------------------
+# Platform: Web
+web/.dart_tool/
+
+# ----------------------------------------
+# Platform: Windows & Linux
+windows/flutter/ephemeral/
+windows/.vs/
+windows/flutter/generated_plugins.cmake
+windows/flutter/generated_plugin_registrant.cc
+
+linux/flutter/ephemeral/
+linux/flutter/generated_plugins.cmake
+linux/flutter/generated_plugin_registrant.cc
+
+# ----------------------------------------
+# IDEs and editor settings
+.idea/
+.idea_modules/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*.bak
+
+# Crashlytics (Firebase)
+crashlytics.properties
+crashlytics-build.properties
+com_crashlytics_export_strings.xml
+
+# VSCode launch configs (optional to ignore)
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+
+# ----------------------------------------
+# macOS system files
+.DS_Store
+
+# ----------------------------------------
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ----------------------------------------
+# Coverage & testing
+coverage/
+*.lcov
+app.*.symbols
+app.*.map.json
+
+# ----------------------------------------
+# Logs and misc
+*.log
+*.tmp
+*.lock
