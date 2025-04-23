@@ -48,15 +48,34 @@ class ChatPageState extends ConsumerState<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          widget.location,
-          style: const TextStyle(color: Colors.black),
+        backgroundColor: Color(0xFFF8F9FA), //상대방 이름, 언어, 주소
+        title: Column(
+          children: [
+            Text(
+              '상대방', //매칭 된 사람으로 바꿔야 할 것.
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              '${widget.location} · ${widget.nativeLanguage} → ${widget.targetLanguage}',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
+
       body: Column(
         children: [
-          // 채팅 메시지 영역
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+          ), // 채팅 메시지 영역
           // TODO Firebase, Time, chat 정보 가져오기
           Expanded(
             child: ListView.builder(
@@ -76,10 +95,30 @@ class ChatPageState extends ConsumerState<ChatPage> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    //엔터를 누르면 onSubmitted이 호출
+                    onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                        viewModel.addMessage(value.trim());
+                        _messageController.clear();
+                      }
+                    },
+
                     decoration: InputDecoration(
-                      hintText: '',
+                      filled: true,
+                      fillColor: const Color(0xFFF1F3F4),
+                      hintText: '메시지를 입력하세요',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 16,
+                      ),
+
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24.0),
+                        borderRadius: BorderRadius.circular(16.0),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                   ),
@@ -91,6 +130,13 @@ class ChatPageState extends ConsumerState<ChatPage> {
                       viewModel.addMessage(_messageController.text);
                       _messageController.clear();
                     }
+                  },
+                ),
+                //이미지 추가 버튼 추후 추가
+                IconButton(
+                  icon: const Icon(Icons.image),
+                  onPressed: () {
+                    print("이미지 선택 눌림");
                   },
                 ),
               ],
@@ -106,10 +152,12 @@ class ChatPageState extends ConsumerState<ChatPage> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
+
       child: Row(
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
           if (!isMe)
             CircleAvatar(
@@ -133,9 +181,13 @@ class ChatPageState extends ConsumerState<ChatPage> {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.7,
                 ),
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: isMe ? Colors.blue[100] : Colors.grey[200],
+                  // color: isMe ? Colors.blue[100] : Colors.grey[200],
+                  color: isMe ? Color(0xFFDCF8C6) : Color(0xFFEFEFEF),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(message.text),

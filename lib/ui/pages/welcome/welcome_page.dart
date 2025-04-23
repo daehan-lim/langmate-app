@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/snackbar_util.dart';
+import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import '../../../../app/app_providers.dart';
 import '../../pages/auth/login_page.dart';
-import '../chat/chat_page.dart'; // ChatPage 경로 수정
+import '../chat/chat_page.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -273,6 +274,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
+                                      //builder: (context) => MatchedUsersPage(),
                                       builder:
                                           (context) => ChatPage(
                                             username: _usernameController.text,
