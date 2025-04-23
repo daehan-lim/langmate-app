@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/ui/pages/welcome/welcome_page.dart';
 
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
-import 'ui/pages/home/welcome/welcome_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
