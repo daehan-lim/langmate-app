@@ -1,42 +1,49 @@
 {
   "project_info": {
-    "project_number": "642415310731",
-    "project_id": "langmate-app",
-    "storage_bucket": "langmate-app.firebasestorage.app"
+    "project_number": "690512021850",
+    "project_id": "lang-mate-app",
+    "storage_bucket": "lang-mate-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:642415310731:android:4bac905cb2d982b11b618e",
+        "mobilesdk_app_id": "1:690512021850:android:c4b8b2b450eebe0cdfcb63",
         "android_client_info": {
           "package_name": "com.team404.lang_mate"
         }
       },
       "oauth_client": [
         {
-          "client_id": "642415310731-l16p31908l03r7qnuoci5m6tmqe7453s.apps.googleusercontent.com",
+          "client_id": "690512021850-ko93qdqi95gfp3rq3t3koiuj12pb1945.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.team404.lang_mate",
-            "certificate_hash": "cc67682c113c2c8317965dbdd034f918c6dcf0ec"
+            "certificate_hash": "eb3537874ba3614a44298df7bc766fe7feae2bbc"
           }
         },
         {
-          "client_id": "642415310731-ihhsfr4jk9ukc5k0vi7l5megst3a4eqi.apps.googleusercontent.com",
+          "client_id": "690512021850-a9999sc1cds3t2mrhi3orvp6ptkki9h5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAxvSOs9SNR8W6TOrRDyoLKj3s_34z9u94"
+          "current_key": "AIzaSyCs7BLIjelVL_Bj5T8bCuFbPm_0DL9Bb60"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "642415310731-ihhsfr4jk9ukc5k0vi7l5megst3a4eqi.apps.googleusercontent.com",
+              "client_id": "690512021850-a9999sc1cds3t2mrhi3orvp6ptkki9h5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "690512021850-i76urdaq84ca8d0bfrrcst03a7eht30a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.team404.langMate"
+              }
             }
           ]
         }
