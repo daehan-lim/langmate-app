@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/app/constants/app_constants.dart';
 import '../../../core/utils/snackbar_util.dart';
 import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import '../../../../app/app_providers.dart';
@@ -18,16 +19,11 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
   final _formKey = GlobalKey<FormState>();
 
   // 언어 목록
-  final List<String> _languages = ['한국어', '영어', '일본어', '중국어', '스페인어', '프랑스어'];
+  final List<String> _languages = ['선택', ...AppConstants.languages];
 
   @override
   void initState() {
     super.initState();
-    // 기본 언어 설정
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(welcomeViewModelProvider.notifier).setNativeLanguage('한국어');
-      ref.read(welcomeViewModelProvider.notifier).setTargetLanguage('영어');
-    });
   }
 
   @override
@@ -144,37 +140,50 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              '나의 언어',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                            const Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Text(
+                                '나의 언어',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
-                            DropdownButtonFormField<String>(
-                              value: welcomeState.nativeLanguage ?? '한국어',
-                              items:
-                                  _languages.map((language) {
-                                    return DropdownMenuItem(
-                                      value: language,
-                                      child: Text(language),
-                                    );
-                                  }).toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  ref
-                                      .read(welcomeViewModelProvider.notifier)
-                                      .setNativeLanguage(value);
-                                }
-                              },
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: DropdownButtonFormField<String>(
+                                value: welcomeState.nativeLanguage ?? '한국어',
+                                items:
+                                    _languages
+                                        .where((lang) {
+                                          return lang == '선택' ||
+                                              lang !=
+                                                  welcomeState.targetLanguage;
+                                        })
+                                        .map((language) {
+                                          return DropdownMenuItem(
+                                            value: language,
+                                            child: Text(language),
+                                          );
+                                        })
+                                        .toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    ref
+                                        .read(welcomeViewModelProvider.notifier)
+                                        .setNativeLanguage(value);
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
                                 ),
                               ),
                             ),
@@ -186,37 +195,50 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              '배우고 싶은 언어',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: const Text(
+                                '배우고 싶은 언어',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
-                            DropdownButtonFormField<String>(
-                              value: welcomeState.targetLanguage ?? '영어',
-                              items:
-                                  _languages.map((language) {
-                                    return DropdownMenuItem(
-                                      value: language,
-                                      child: Text(language),
-                                    );
-                                  }).toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  ref
-                                      .read(welcomeViewModelProvider.notifier)
-                                      .setTargetLanguage(value);
-                                }
-                              },
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: DropdownButtonFormField<String>(
+                                value: welcomeState.targetLanguage ?? '영어',
+                                items:
+                                    _languages
+                                        .where((lang) {
+                                          return lang == '선택' ||
+                                              lang !=
+                                                  welcomeState.nativeLanguage;
+                                        })
+                                        .map((language) {
+                                          return DropdownMenuItem(
+                                            value: language,
+                                            child: Text(language),
+                                          );
+                                        })
+                                        .toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    ref
+                                        .read(welcomeViewModelProvider.notifier)
+                                        .setTargetLanguage(value);
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
                                 ),
                               ),
                             ),

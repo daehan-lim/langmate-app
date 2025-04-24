@@ -44,7 +44,7 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
   @override
   WelcomeState build() {
     // 초기 상태 반환
-    return const WelcomeState(nativeLanguage: '한국어', targetLanguage: '영어');
+    return const WelcomeState(nativeLanguage: '선택', targetLanguage: '선택');
   }
 
   // 사용자 이름 설정
