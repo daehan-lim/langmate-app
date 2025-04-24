@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/app_providers.dart';
 
 import '../../../core/exceptions/data_exceptions.dart';
-import '../../../data/model/user.dart';
+import '../../../data/model/app_user.dart';
 
-class MatchedUsersViewModel extends Notifier<AsyncValue<List<User>>> {
+class MatchedUsersViewModel extends Notifier<AsyncValue<List<AppUser>>> {
   @override
-  AsyncValue<List<User>> build() {
+  AsyncValue<List<AppUser>> build() {
     fetchNearbyUsers();
     return AsyncLoading();
   }
@@ -14,7 +14,7 @@ class MatchedUsersViewModel extends Notifier<AsyncValue<List<User>>> {
   Future<void> fetchNearbyUsers() async {
     // state = AsyncLoading();
     try {
-      List<User> users = await ref
+      List<AppUser> users = await ref
           .read(userRepositoryProvider)
           .getNearbyUsers('1', '은평구');
       state = AsyncData(users);
@@ -35,6 +35,6 @@ class MatchedUsersViewModel extends Notifier<AsyncValue<List<User>>> {
 }
 
 final matchedUsersViewModelProvider =
-    NotifierProvider<MatchedUsersViewModel, AsyncValue<List<User>>>(
+    NotifierProvider<MatchedUsersViewModel, AsyncValue<List<AppUser>>>(
       MatchedUsersViewModel.new,
     );

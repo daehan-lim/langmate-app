@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import '../../../app/app_providers.dart';
 import '../../../core/utils/snackbar_util.dart';
+import '../../user_global_view_model.dart';
 import '../welcome/welcome_page.dart';
 import 'login_view_model.dart';
 
@@ -20,20 +23,40 @@ class LoginPage extends ConsumerWidget {
     }
 
     // 로그인 상태 확인 (authStateProvider 사용)
-    ref.listen(authStateProvider, (previous, next) {
+    /*ref.listen(authStateProvider, (previous, next) {
       print("authStateProvider 변경 감지됨: $previous -> $next");
-      next.whenData((user) {
+      next.whenData((user) async {
         print("authStateProvider 데이터: ${user?.displayName ?? '로그인 안됨'}");
         if (user != null) {
           print("로그인 성공: ${user.displayName}, uid: ${user.uid}");
-          print("Welcome 페이지로 이동 시도 (authStateProvider 경로)");
-          // 로그인 성공 시 WelcomePage로 이동
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const WelcomePage()),
-          );
+          final doc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+
+          if (doc.exists) {
+            final appUser = AppUser.fromMap(user.uid, doc.data()!);
+            ref.read(userGlobalViewModelProvider.notifier).setUser(appUser);
+
+            if (appUser.nativeLanguage != null &&
+                appUser.targetLanguage != null) {
+              print("기존 사용자 - HomePage로 이동");
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const MatchedUsersPage()),
+              );
+            } else {
+              print("사용자 정보 미완성 - WelcomePage로 이동");
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const WelcomePage()),
+              );
+            }
+          } else {
+            print("Firestore에 사용자 정보 없음 - 로그아웃 처리");
+            await ref.read(authServiceProvider).signOut();
+          }
         }
       });
-    });
+    });*/
 
     return Scaffold(
       body: SafeArea(
@@ -74,32 +97,30 @@ class LoginPage extends ConsumerWidget {
                             : () async {
                               print("로그인 버튼 클릭됨");
                               try {
-                                final user =
-                                    await ref
-                                        .read(loginViewModelProvider.notifier)
-                                        .signInWithGoogle();
-
-                                print("로그인 결과: ${user != null ? '성공' : '실패'}");
-
-                                if (user != null) {
-                                  print(
-                                    "사용자 정보: ${user.displayName}, ${user.email}",
+                                await ref
+                                    .read(loginViewModelProvider.notifier)
+                                    .signInAndPrepareUser();
+                                final appUser = ref.read(
+                                  userGlobalViewModelProvider,
+                                );
+                                if (appUser?.nativeLanguage != null &&
+                                    appUser?.targetLanguage != null) {
+                                  print("기존 사용자 - HomePage로 이동");
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (_) => MatchedUsersPage(),
+                                    ),
                                   );
-                                  print("Welcome 페이지로 이동 시도 (버튼 클릭 경로)");
-
-                                  // 두 가지 방법으로 시도
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    print("WidgetsBinding 콜백 실행됨");
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (context) => const WelcomePage(),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  });
+                                } else {
+                                  print("신규 사용자 - WelcomePage로 이동");
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (_) => const WelcomePage(),
+                                    ),
+                                  );
                                 }
                               } catch (e) {
-                                print("로그인 중 예외 발생: $e");
+                                print("사용자 정보가 글로벌 상태에 없습니다. 네비게이션 중단. $e");
                               }
                             },
                     style: ElevatedButton.styleFrom(
@@ -115,10 +136,7 @@ class LoginPage extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // 구글 로고 (이미지 사용 권장)
-                        Image.asset(
-                          'assets/icons/google.png',
-                          height: 18,
-                        ),
+                        Image.asset('assets/icons/google.png', height: 18),
                         const SizedBox(width: 16),
                         Text(
                           loginState.isLoading ? '로그인 중...' : '구글 계정으로 시작하기',

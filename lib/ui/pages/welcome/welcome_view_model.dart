@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/app/constants/app_constants.dart';
 import '../../../../../core/utils/geolocator_util.dart';
 import '../../../../../app/app_providers.dart';
 
@@ -58,36 +59,52 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
       // 로딩 상태로 변경, 이전 에러 메시지 제거
       state = state.copyWith(isLoading: true, errorMessage: null);
 
-      final position = await GeolocatorUtil.getPosition();
-      if (position == null) {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: '위치 정보를 가져올 수 없습니다. 권한을 확인해주세요.',
-        );
-        return;
+      final (status, position) = await GeolocatorUtil.getPosition();
+
+      switch (status) {
+        case LocationStatus.success:
+          // LocationRepository 가져오기
+          final locationRepo = ref.read(locationRepositoryProvider);
+          final district = await locationRepo.getDistrictByLocation(
+            position!.longitude,
+            position.latitude,
+          );
+
+          // 결과 상태 업데이트
+          state = state.copyWith(
+            location: district ?? '알 수 없는 위치',
+            isLoading: false,
+          );
+          break;
+
+        case LocationStatus.deniedTemporarily:
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: '위치 권한이 거부되었습니다. 권한을 허용해주세요.',
+          );
+          break;
+
+        case LocationStatus.deniedForever:
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: AppConstants.locPermissionDeniedForever,
+          );
+          break;
+
+        case LocationStatus.error:
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: '위치 정보를 가져오는 중 오류가 발생했습니다. 다시 시도해 주세요',
+          );
+          break;
       }
-
-      // LocationRepository 가져오기
-      final locationRepo = ref.read(locationRepositoryProvider);
-      final district = await locationRepo.getDistrictByLocation(
-        position.longitude,
-        position.latitude,
-      );
-
-      // 결과 상태 업데이트
-      state = state.copyWith(
-        location: district ?? '알 수 없는 위치',
-        isLoading: false,
-      );
     } catch (e) {
-      // 오류 상태 업데이트
       state = state.copyWith(
         isLoading: false,
-        errorMessage: '위치 정보를 가져오는 중 오류가 발생했습니다: ${e.toString()}',
+        errorMessage: '위치 정보 처리 중 오류가 발생했습니다: ${e.toString()}',
       );
     }
   }
-
   // 모국어 설정
   void setNativeLanguage(String language) {
     state = state.copyWith(nativeLanguage: language);

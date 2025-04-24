@@ -3,10 +3,10 @@ import 'package:lang_mate/app/constants/app_styles.dart';
 import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
 import '../../../../app/constants/app_colors.dart';
-import '../../../../data/model/user.dart';
+import '../../../../data/model/app_user.dart';
 
 class UserListItem extends StatelessWidget {
-  final User user;
+  final AppUser user;
 
   const UserListItem(this.user, {super.key});
 

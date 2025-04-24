@@ -1,15 +1,15 @@
-import '../model/user.dart';
+import '../model/app_user.dart';
 
 abstract class UserRepository {
-  Future<List<User>> getNearbyUsers(String userId, String district);
+  Future<List<AppUser>> getNearbyUsers(String userId, String district);
 }
 
 class UserRepositoryMock implements UserRepository {
   @override
-  Future<List<User>> getNearbyUsers(String userId, String district) async {
+  Future<List<AppUser>> getNearbyUsers(String userId, String district) async {
     await Future.delayed(Duration(seconds: 1));
     return [
-      User(
+      AppUser(
         id: '1',
         name: '민수',
         district: '서울특별시 은평구 불광동',
@@ -20,7 +20,7 @@ class UserRepositoryMock implements UserRepository {
         age: 25,
         partnerPreference: '가벼운 대화를 즐기는 분이면 좋겠어요.',
       ),
-      User(
+      AppUser(
         id: '2',
         name: '소영',
         district: '서울특별시 강남구 역삼동',
@@ -31,7 +31,7 @@ class UserRepositoryMock implements UserRepository {
         age: 30,
         partnerPreference: '친절하고 인내심 있는 언어 파트너를 원합니다.',
       ),
-      User(
+      AppUser(
         id: '3',
         name: '다니엘',
         district: '부산광역시 해운대구 우동',
@@ -42,7 +42,7 @@ class UserRepositoryMock implements UserRepository {
         age: 22,
         partnerPreference: '비슷한 관심사를 가진 분을 찾고 있어요.',
       ),
-      User(
+      AppUser(
         id: '4',
         name: '지민',
         district: '대구광역시 수성구 범어동',
@@ -53,7 +53,7 @@ class UserRepositoryMock implements UserRepository {
         age: 28,
         partnerPreference: '깊이 있는 대화를 즐기는 분이면 좋겠어요.',
       ),
-      User(
+      AppUser(
         id: '5',
         name: '유키',
         district: '인천광역시 연수구 송도동',
@@ -64,7 +64,7 @@ class UserRepositoryMock implements UserRepository {
         age: 35,
         partnerPreference: '기술에 열정적인 분을 만나고 싶습니다.',
       ),
-      User(
+      AppUser(
         id: '6',
         name: '리우',
         district: '경기도 성남시 분당구 정자동',

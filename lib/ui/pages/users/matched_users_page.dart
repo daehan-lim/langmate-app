@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/ui/pages/users/widgets/user_list_item.dart';
 
-import '../../../data/model/user.dart';
+import '../../../data/model/app_user.dart';
 import '../../widgets/message_layout.dart';
 import 'matched_users_view_model.dart';
 
@@ -42,7 +42,7 @@ class MatchedUsersPage extends StatelessWidget {
                 ),
                 itemCount: state.length,
                 itemBuilder: (context, index) {
-                  final User user = state[index];
+                  final AppUser user = state[index];
                   return UserListItem(user);
                 },
               );

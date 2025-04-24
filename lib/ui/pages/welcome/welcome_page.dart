@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
+import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
 import '../../pages/auth/login_page.dart';
-import '../chat/chat_page.dart';
+import '../../user_global_view_model.dart';
+import '../../widgets/app_cached_image.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
@@ -23,6 +26,10 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
   @override
   void initState() {
     super.initState();
+    final user = ref.read(userGlobalViewModelProvider);
+    if (user != null) {
+      _usernameController.text = user.name;
+    }
   }
 
   @override
@@ -35,7 +42,8 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
   Widget build(BuildContext context) {
     final welcomeState = ref.watch(welcomeViewModelProvider);
     final authService = ref.read(authServiceProvider);
-    final user = authService.currentUser;
+    // final user = authService.currentUser;
+    final user = ref.watch(userGlobalViewModelProvider);
 
     // 에러 메시지 처리
     if (welcomeState.errorMessage != null) {
@@ -80,7 +88,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   // 환영 메시지와 사용자 정보 표시
                   if (user != null) ...[
                     Text(
-                      '환영합니다, ${user.displayName ?? '사용자'}님!',
+                      '환영합니다, ${user.name}님!',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -98,15 +106,25 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   const SizedBox(height: 30),
                   // 사용자 아이콘
                   Center(
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.person, size: 50),
-                    ),
+                    child:
+                        user?.profileImage != null
+                            ? ClipOval(
+                              child: AppCachedImage(
+                                imageUrl: user!.profileImage!,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                            : Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.person, size: 50),
+                            ),
                   ),
                   const SizedBox(height: 30),
                   // 이름 입력 필드
@@ -179,7 +197,9 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                   onChanged: (value) {
                                     if (value != null) {
                                       ref
-                                          .read(welcomeViewModelProvider.notifier)
+                                          .read(
+                                            welcomeViewModelProvider.notifier,
+                                          )
                                           .setNativeLanguage(value);
                                     }
                                   },
@@ -243,7 +263,9 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                   onChanged: (value) {
                                     if (value != null) {
                                       ref
-                                          .read(welcomeViewModelProvider.notifier)
+                                          .read(
+                                            welcomeViewModelProvider.notifier,
+                                          )
                                           .setTargetLanguage(value);
                                     }
                                   },
@@ -305,32 +327,61 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed:
-                          welcomeState.isLoading
-                              ? null
-                              : () {
-                                if (_formKey.currentState!.validate()) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      //builder: (context) => MatchedUsersPage(),
-                                      builder:
-                                          (context) => ChatPage(
-                                            username: _usernameController.text,
-                                            location:
-                                                welcomeState.location ??
-                                                '서울시 강남구',
-                                            nativeLanguage:
-                                                welcomeState.nativeLanguage ??
-                                                '한국어',
-                                            targetLanguage:
-                                                welcomeState.targetLanguage ??
-                                                '영어',
-                                          ),
-                                    ),
-                                  );
-                                }
-                              },
+                      onPressed: welcomeState.isLoading
+                          ? null
+                          : () async {
+                        if (_formKey.currentState!.validate()) {
+                          print("시작하기 버튼 클릭됨 - 프로필 저장 시도 중");
+
+                          if (user == null) {
+                            print("글로벌 사용자 정보가 없습니다. 로그인 다시 시도 필요.");
+                            SnackbarUtil.showSnackBar(context, '사용자 정보를 불러올 수 없습니다.');
+                            return;
+                          }
+
+                          if (welcomeState.location == null) {
+                            SnackbarUtil.showSnackBar(context, '위치 가져오기 버튼을 누르고 다시 시도해 주세여');
+                            return;
+                          }
+
+                          final updatedUser = user.copyWith(
+                            name: _usernameController.text,
+                            nativeLanguage: welcomeState.nativeLanguage,
+                            targetLanguage: welcomeState.targetLanguage,
+                            district: welcomeState.location!,
+                          );
+
+                          try {
+                            // Save to Firestore
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(updatedUser.id)
+                                .set({
+                              'name': updatedUser.name,
+                              'nativeLanguage': updatedUser.nativeLanguage,
+                              'targetLanguage': updatedUser.targetLanguage,
+                              'district': updatedUser.district,
+                              'profileImage': updatedUser.profileImage,
+                              'bio': updatedUser.bio,
+                              'age': updatedUser.age,
+                              'partnerPreference': updatedUser.partnerPreference,
+                            });
+
+                            // ✅ Update global state
+                            ref.read(userGlobalViewModelProvider.notifier).setUser(updatedUser);
+
+                            print("✅ 사용자 정보 저장 완료. 홈으로 이동");
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => const MatchedUsersPage()),
+                            );
+                          } catch (e) {
+                            print("Firestore 저장 중 오류 발생: $e");
+                            SnackbarUtil.showSnackBar(context, '정보 저장 중 오류가 발생했습니다.');
+                          }
+                        }
+                      },
                       child: const Text(
                         '시작하기',
                         style: TextStyle(
