@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
+import 'package:lang_mate/core/utils/ui_util.dart';
 import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
@@ -55,25 +56,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('LangMate'),
-        actions: [
-          // 로그아웃 버튼
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              try {
-                await authService.signOut();
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                  (route) => false,
-                );
-              } catch (e) {
-                SnackbarUtil.showSnackBar(context, '로그아웃 중 오류가 발생했습니다');
-              }
-            },
-            tooltip: '로그아웃',
-          ),
-        ],
+        actions: [UIUtil.buildLogOutIconButton(context, authService)],
       ),
       body: SafeArea(
         child: Padding(
@@ -327,61 +310,82 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: welcomeState.isLoading
-                          ? null
-                          : () async {
-                        if (_formKey.currentState!.validate()) {
-                          print("시작하기 버튼 클릭됨 - 프로필 저장 시도 중");
+                      onPressed:
+                          welcomeState.isLoading
+                              ? null
+                              : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  print("시작하기 버튼 클릭됨 - 프로필 저장 시도 중");
 
-                          if (user == null) {
-                            print("글로벌 사용자 정보가 없습니다. 로그인 다시 시도 필요.");
-                            SnackbarUtil.showSnackBar(context, '사용자 정보를 불러올 수 없습니다.');
-                            return;
-                          }
+                                  if (user == null) {
+                                    print("글로벌 사용자 정보가 없습니다. 로그인 다시 시도 필요.");
+                                    SnackbarUtil.showSnackBar(
+                                      context,
+                                      '사용자 정보를 불러올 수 없습니다.',
+                                    );
+                                    return;
+                                  }
 
-                          if (welcomeState.location == null) {
-                            SnackbarUtil.showSnackBar(context, '위치 가져오기 버튼을 누르고 다시 시도해 주세여');
-                            return;
-                          }
+                                  if (welcomeState.location == null) {
+                                    SnackbarUtil.showSnackBar(
+                                      context,
+                                      '위치 가져오기 버튼을 누르고 다시 시도해 주세여',
+                                    );
+                                    return;
+                                  }
 
-                          final updatedUser = user.copyWith(
-                            name: _usernameController.text,
-                            nativeLanguage: welcomeState.nativeLanguage,
-                            targetLanguage: welcomeState.targetLanguage,
-                            district: welcomeState.location!,
-                          );
+                                  final updatedUser = user.copyWith(
+                                    name: _usernameController.text,
+                                    nativeLanguage: welcomeState.nativeLanguage,
+                                    targetLanguage: welcomeState.targetLanguage,
+                                    district: welcomeState.location!,
+                                  );
 
-                          try {
-                            // Save to Firestore
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(updatedUser.id)
-                                .set({
-                              'name': updatedUser.name,
-                              'nativeLanguage': updatedUser.nativeLanguage,
-                              'targetLanguage': updatedUser.targetLanguage,
-                              'district': updatedUser.district,
-                              'profileImage': updatedUser.profileImage,
-                              'bio': updatedUser.bio,
-                              'age': updatedUser.age,
-                              'partnerPreference': updatedUser.partnerPreference,
-                            });
+                                  try {
+                                    // Save to Firestore
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(updatedUser.id)
+                                        .set({
+                                          'name': updatedUser.name,
+                                          'nativeLanguage':
+                                              updatedUser.nativeLanguage,
+                                          'targetLanguage':
+                                              updatedUser.targetLanguage,
+                                          'district': updatedUser.district,
+                                          'profileImage':
+                                              updatedUser.profileImage,
+                                          'bio': updatedUser.bio,
+                                          'age': updatedUser.age,
+                                          'partnerPreference':
+                                              updatedUser.partnerPreference,
+                                        });
 
-                            // ✅ Update global state
-                            ref.read(userGlobalViewModelProvider.notifier).setUser(updatedUser);
+                                    // ✅ Update global state
+                                    ref
+                                        .read(
+                                          userGlobalViewModelProvider.notifier,
+                                        )
+                                        .setUser(updatedUser);
 
-                            print("✅ 사용자 정보 저장 완료. 홈으로 이동");
+                                    print("✅ 사용자 정보 저장 완료. 홈으로 이동");
 
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => const MatchedUsersPage()),
-                            );
-                          } catch (e) {
-                            print("Firestore 저장 중 오류 발생: $e");
-                            SnackbarUtil.showSnackBar(context, '정보 저장 중 오류가 발생했습니다.');
-                          }
-                        }
-                      },
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => const MatchedUsersPage(),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    print("Firestore 저장 중 오류 발생: $e");
+                                    SnackbarUtil.showSnackBar(
+                                      context,
+                                      '정보 저장 중 오류가 발생했습니다.',
+                                    );
+                                  }
+                                }
+                              },
                       child: const Text(
                         '시작하기',
                         style: TextStyle(

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/ui/pages/users/widgets/user_list_item.dart';
 
+import '../../../app/app_providers.dart';
+import '../../../core/utils/ui_util.dart';
 import '../../../data/model/app_user.dart';
 import '../../widgets/message_layout.dart';
 import 'matched_users_view_model.dart';
@@ -12,12 +14,16 @@ class MatchedUsersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('주변 파트너 찾기')),
-      body: Consumer(
-        builder: (context, ref, child) {
-          final users = ref.watch(matchedUsersViewModelProvider);
-          return users.when(
+    return Consumer(
+      builder: (context, ref, child) {
+        final authService = ref.read(authServiceProvider);
+        final users = ref.watch(matchedUsersViewModelProvider);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('주변 파트너 찾기'),
+            actions: [UIUtil.buildLogOutIconButton(context, authService)],
+          ),
+          body: users.when(
             loading:
                 () =>
                     const Center(child: CupertinoActivityIndicator(radius: 20)),
@@ -47,9 +53,9 @@ class MatchedUsersPage extends StatelessWidget {
                 },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
