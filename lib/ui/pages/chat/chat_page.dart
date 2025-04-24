@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/app_providers.dart';
+import '../../../core/utils/ui_util.dart';
 import '../../../data/model/chat_message.dart';
-import '../../../data/model/chat_models.dart';
 import '../../user_global_view_model.dart';
 import 'chat_view_model.dart';
 
@@ -49,9 +49,11 @@ class ChatPageState extends ConsumerState<ChatPage> {
     final chatState = ref.watch(chatViewModelProvider);
     final viewModel = ref.read(chatViewModelProvider.notifier);
     final user = ref.watch(userGlobalViewModelProvider);
+    final authService = ref.read(authServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
+        actions: [UIUtil.buildLogOutIconButton(context, authService)],
         backgroundColor: Color(0xFFF8F9FA), //상대방 이름, 언어, 주소
         title: Column(
           children: [
