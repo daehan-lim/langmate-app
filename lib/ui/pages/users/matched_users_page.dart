@@ -37,7 +37,7 @@ class MatchedUsersPage extends StatelessWidget {
               data: (state) {
                 if (state.isEmpty) {
                   return MessageLayout(
-                    message: '검색 결과가 없습니다',
+                    message: '이 지역에는 아직 연결할 수 있는 사용자가 없습니다',
                     imageUrl: 'assets/images/no_results.png',
                   );
                 }

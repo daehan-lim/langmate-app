@@ -8,6 +8,7 @@ class UserRepositoryMock implements UserRepository {
   @override
   Future<List<AppUser>> getNearbyUsers(String userId, String district) async {
     await Future.delayed(Duration(seconds: 1));
+    // return [];
     return [
       AppUser(
         id: '1',
