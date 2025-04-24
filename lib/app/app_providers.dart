@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/data/repository/user_repository.dart';
 import '../data/repository/location_repository.dart';
-import '../ui/pages/chat/chat_view_model.dart';
-import '../ui/pages/home/home_view_model.dart';
+import '../ui/pages/home/tabs/chat/chat_view_model.dart';
 import '../ui/pages/welcome/welcome_view_model.dart';
 import '../core/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,10 +34,6 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepositoryMock();
 });
 
-// 홈 화면 관련 프로바이더
-final homeViewModelProvider = NotifierProvider<HomeViewModel, AsyncValue<int>>(
-  HomeViewModel.new,
-);
 
 // 환영 화면 관련 프로바이더
 final welcomeViewModelProvider =

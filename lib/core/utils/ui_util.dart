@@ -4,7 +4,7 @@ import 'package:lang_mate/core/utils/snackbar_util.dart';
 
 import '../../data/model/app_user.dart';
 import '../../ui/pages/auth/login_page.dart';
-import '../../ui/pages/chat/chat_page.dart';
+import '../../ui/pages/home/home_page.dart';
 import '../../ui/pages/welcome/welcome_page.dart';
 
 class UIUtil {
@@ -36,7 +36,7 @@ class UIUtil {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => hasLanguages ? const ChatPage() : const WelcomePage(),
+        builder: (_) => hasLanguages ? HomePage() : const WelcomePage(),
       ),
     );
   }
