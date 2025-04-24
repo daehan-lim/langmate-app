@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/app_providers.dart';
+import '../../../core/utils/ui_util.dart';
 import '../../../data/model/chat_message.dart';
-import '../../../data/model/chat_models.dart';
+import '../../user_global_view_model.dart';
 import 'chat_view_model.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
-  final String username;
-  final String location;
-  final String nativeLanguage;
-  final String targetLanguage;
+  // final String username;
+  // final String location;
+  // final String nativeLanguage;
+  // final String targetLanguage;
 
-  const ChatPage({
-    Key? key,
-    required this.username,
-    required this.location,
-    required this.nativeLanguage,
-    required this.targetLanguage,
-  }) : super(key: key);
+  const ChatPage({super.key});
 
   @override
   ChatPageState createState() => ChatPageState();
@@ -37,7 +32,15 @@ class ChatPageState extends ConsumerState<ChatPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(chatViewModelProvider.notifier).loadInitialMessages();
+      // Firebase Auth에서 현재 사용자 ID 가져오기
+      final authService = ref.read(authServiceProvider);
+      final userId = authService.currentUser?.uid ?? 'anonymous';
+      final user = ref.read(userGlobalViewModelProvider);
+
+      // ViewModel 초기화
+      ref
+          .read(chatViewModelProvider.notifier)
+          .initialize(userId, user!.name, user.district!);
     });
   }
 
@@ -45,9 +48,12 @@ class ChatPageState extends ConsumerState<ChatPage> {
   Widget build(BuildContext context) {
     final chatState = ref.watch(chatViewModelProvider);
     final viewModel = ref.read(chatViewModelProvider.notifier);
+    final user = ref.watch(userGlobalViewModelProvider);
+    final authService = ref.read(authServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
+        actions: [UIUtil.buildLogOutIconButton(context, authService)],
         backgroundColor: Color(0xFFF8F9FA), //상대방 이름, 언어, 주소
         title: Column(
           children: [
@@ -60,7 +66,7 @@ class ChatPageState extends ConsumerState<ChatPage> {
               ),
             ),
             Text(
-              '${widget.location} · ${widget.nativeLanguage} → ${widget.targetLanguage}',
+              '${user!.district} · ${user.nativeLanguage} → ${user.targetLanguage}',
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 12,
