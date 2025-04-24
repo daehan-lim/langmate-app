@@ -1,13 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/utils/snackbar_util.dart';
+import 'package:lang_mate/app/constants/app_constants.dart';
+import 'package:lang_mate/core/utils/ui_util.dart';
 import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
+import '../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
 import '../../pages/auth/login_page.dart';
-import '../chat/chat_page.dart';
+import '../../user_global_view_model.dart';
+import '../../widgets/app_cached_image.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+  const WelcomePage({super.key});
 
   @override
   WelcomePageState createState() => WelcomePageState();
@@ -18,16 +22,15 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
   final _formKey = GlobalKey<FormState>();
 
   // 언어 목록
-  final List<String> _languages = ['한국어', '영어', '일본어', '중국어', '스페인어', '프랑스어'];
+  final List<String> _languages = ['선택', ...AppConstants.languages];
 
   @override
   void initState() {
     super.initState();
-    // 기본 언어 설정
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(welcomeViewModelProvider.notifier).setNativeLanguage('한국어');
-      ref.read(welcomeViewModelProvider.notifier).setTargetLanguage('영어');
-    });
+    final user = ref.read(userGlobalViewModelProvider);
+    if (user != null) {
+      _usernameController.text = user.name;
+    }
   }
 
   @override
@@ -40,7 +43,8 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
   Widget build(BuildContext context) {
     final welcomeState = ref.watch(welcomeViewModelProvider);
     final authService = ref.read(authServiceProvider);
-    final user = authService.currentUser;
+    // final user = authService.currentUser;
+    final user = ref.watch(userGlobalViewModelProvider);
 
     // 에러 메시지 처리
     if (welcomeState.errorMessage != null) {
@@ -52,25 +56,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('LangMate'),
-        actions: [
-          // 로그아웃 버튼
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              try {
-                await authService.signOut();
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                  (route) => false,
-                );
-              } catch (e) {
-                SnackbarUtil.showSnackBar(context, '로그아웃 중 오류가 발생했습니다');
-              }
-            },
-            tooltip: '로그아웃',
-          ),
-        ],
+        actions: [UIUtil.buildLogOutIconButton(context, authService)],
       ),
       body: SafeArea(
         child: Padding(
@@ -85,7 +71,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   // 환영 메시지와 사용자 정보 표시
                   if (user != null) ...[
                     Text(
-                      '환영합니다, ${user.displayName ?? '사용자'}님!',
+                      '환영합니다, ${user.name}님!',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -103,21 +89,32 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   const SizedBox(height: 30),
                   // 사용자 아이콘
                   Center(
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.person, size: 50),
-                    ),
+                    child:
+                        user?.profileImage != null
+                            ? ClipOval(
+                              child: AppCachedImage(
+                                imageUrl: user!.profileImage!,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                            : Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.person, size: 50),
+                            ),
                   ),
                   const SizedBox(height: 30),
                   // 이름 입력 필드
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(
+                      labelText: '닉네임',
                       hintText: '사용할 이름을 입력해 주세요',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -144,37 +141,61 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              '나의 언어',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                            const Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Text(
+                                '나의 언어',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
-                            DropdownButtonFormField<String>(
-                              value: welcomeState.nativeLanguage ?? '한국어',
-                              items:
-                                  _languages.map((language) {
-                                    return DropdownMenuItem(
-                                      value: language,
-                                      child: Text(language),
-                                    );
-                                  }).toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  ref
-                                      .read(welcomeViewModelProvider.notifier)
-                                      .setNativeLanguage(value);
-                                }
-                              },
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: SizedBox(
+                                height: 88,
+                                child: DropdownButtonFormField<String>(
+                                  validator: (text) {
+                                    if (text == '선택') {
+                                      return '나의 언어를 선택해 주세여';
+                                    }
+                                    return null;
+                                  },
+                                  value: welcomeState.nativeLanguage ?? '한국어',
+                                  items:
+                                      _languages
+                                          .where((lang) {
+                                            return lang == '선택' ||
+                                                lang !=
+                                                    welcomeState.targetLanguage;
+                                          })
+                                          .map((language) {
+                                            return DropdownMenuItem(
+                                              value: language,
+                                              child: Text(language),
+                                            );
+                                          })
+                                          .toList(),
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      ref
+                                          .read(
+                                            welcomeViewModelProvider.notifier,
+                                          )
+                                          .setNativeLanguage(value);
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -186,37 +207,61 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              '배우고 싶은 언어',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: const Text(
+                                '배우고 싶은 언어',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
-                            DropdownButtonFormField<String>(
-                              value: welcomeState.targetLanguage ?? '영어',
-                              items:
-                                  _languages.map((language) {
-                                    return DropdownMenuItem(
-                                      value: language,
-                                      child: Text(language),
-                                    );
-                                  }).toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  ref
-                                      .read(welcomeViewModelProvider.notifier)
-                                      .setTargetLanguage(value);
-                                }
-                              },
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: SizedBox(
+                                height: 88,
+                                child: DropdownButtonFormField<String>(
+                                  validator: (text) {
+                                    if (text == '선택') {
+                                      return '배우고 싶은 언어를 선택해 주세여';
+                                    }
+                                    return null;
+                                  },
+                                  value: welcomeState.targetLanguage ?? '영어',
+                                  items:
+                                      _languages
+                                          .where((lang) {
+                                            return lang == '선택' ||
+                                                lang !=
+                                                    welcomeState.nativeLanguage;
+                                          })
+                                          .map((language) {
+                                            return DropdownMenuItem(
+                                              value: language,
+                                              child: Text(language),
+                                            );
+                                          })
+                                          .toList(),
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      ref
+                                          .read(
+                                            welcomeViewModelProvider.notifier,
+                                          )
+                                          .setTargetLanguage(value);
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -226,7 +271,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   // 위치정보 텍스트
                   GestureDetector(
                     onTap: () {
@@ -269,27 +314,77 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                       onPressed:
                           welcomeState.isLoading
                               ? null
-                              : () {
+                              : () async {
                                 if (_formKey.currentState!.validate()) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      //builder: (context) => MatchedUsersPage(),
-                                      builder:
-                                          (context) => ChatPage(
-                                            username: _usernameController.text,
-                                            location:
-                                                welcomeState.location ??
-                                                '서울시 강남구',
-                                            nativeLanguage:
-                                                welcomeState.nativeLanguage ??
-                                                '한국어',
-                                            targetLanguage:
-                                                welcomeState.targetLanguage ??
-                                                '영어',
-                                          ),
-                                    ),
+                                  print("시작하기 버튼 클릭됨 - 프로필 저장 시도 중");
+
+                                  if (user == null) {
+                                    print("글로벌 사용자 정보가 없습니다. 로그인 다시 시도 필요.");
+                                    SnackbarUtil.showSnackBar(
+                                      context,
+                                      '사용자 정보를 불러올 수 없습니다.',
+                                    );
+                                    return;
+                                  }
+
+                                  if (welcomeState.location == null) {
+                                    SnackbarUtil.showSnackBar(
+                                      context,
+                                      '위치 가져오기 버튼을 누르고 다시 시도해 주세여',
+                                    );
+                                    return;
+                                  }
+
+                                  final updatedUser = user.copyWith(
+                                    name: _usernameController.text,
+                                    nativeLanguage: welcomeState.nativeLanguage,
+                                    targetLanguage: welcomeState.targetLanguage,
+                                    district: welcomeState.location!,
                                   );
+
+                                  try {
+                                    // Save to Firestore
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(updatedUser.id)
+                                        .set({
+                                          'name': updatedUser.name,
+                                          'nativeLanguage':
+                                              updatedUser.nativeLanguage,
+                                          'targetLanguage':
+                                              updatedUser.targetLanguage,
+                                          'district': updatedUser.district,
+                                          'profileImage':
+                                              updatedUser.profileImage,
+                                          'bio': updatedUser.bio,
+                                          'age': updatedUser.age,
+                                          'partnerPreference':
+                                              updatedUser.partnerPreference,
+                                        });
+
+                                    // ✅ Update global state
+                                    ref
+                                        .read(
+                                          userGlobalViewModelProvider.notifier,
+                                        )
+                                        .setUser(updatedUser);
+
+                                    print("✅ 사용자 정보 저장 완료. 홈으로 이동");
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => const MatchedUsersPage(),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    print("Firestore 저장 중 오류 발생: $e");
+                                    SnackbarUtil.showSnackBar(
+                                      context,
+                                      '정보 저장 중 오류가 발생했습니다.',
+                                    );
+                                  }
                                 }
                               },
                       child: const Text(

@@ -1,9 +1,9 @@
-import 'package:lang_mate/data/model/user.dart';
+import 'package:lang_mate/data/model/app_user.dart';
 
 class ChatRoom {
   final String id;
   final String name;
-  final List<User> participants;
+  final List<AppUser> participants;
   final DateTime lastMessageTime;
   final String? lastMessageText;
 
