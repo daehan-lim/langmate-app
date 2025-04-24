@@ -144,7 +144,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                             const Padding(
                               padding: EdgeInsets.only(left: 8),
                               child: Text(
-                                '나의 언어',
+                                '모국어',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -159,7 +159,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                 child: DropdownButtonFormField<String>(
                                   validator: (text) {
                                     if (text == '선택') {
-                                      return '나의 언어를 선택해 주세여';
+                                      return '모국어를 선택해 주세요';
                                     }
                                     return null;
                                   },
@@ -225,7 +225,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                 child: DropdownButtonFormField<String>(
                                   validator: (text) {
                                     if (text == '선택') {
-                                      return '배우고 싶은 언어를 선택해 주세여';
+                                      return '배우고 싶은 언어를 선택해 주세요';
                                     }
                                     return null;
                                   },
@@ -330,7 +330,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                   if (welcomeState.location == null) {
                                     SnackbarUtil.showSnackBar(
                                       context,
-                                      '위치 가져오기 버튼을 누르고 다시 시도해 주세여',
+                                      '위치 가져오기 버튼을 누르고 다시 시도해 주세요',
                                     );
                                     return;
                                   }
