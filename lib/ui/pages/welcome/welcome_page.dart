@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import 'package:lang_mate/core/utils/ui_util.dart';
-import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
-import '../../pages/auth/login_page.dart';
 import '../../user_global_view_model.dart';
 import '../../widgets/app_cached_image.dart';
+import '../home/home_page.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
@@ -339,7 +338,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                     name: _usernameController.text,
                                     nativeLanguage: welcomeState.nativeLanguage,
                                     targetLanguage: welcomeState.targetLanguage,
-                                    district: welcomeState.location!,
+                                    district: welcomeState.location ?? '테스트 위치 바꾸기',
                                   );
 
                                   try {
@@ -375,7 +374,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                       context,
                                       MaterialPageRoute(
                                         builder:
-                                            (_) => const MatchedUsersPage(),
+                                            (_) => const HomePage(),
                                       ),
                                     );
                                   } catch (e) {
