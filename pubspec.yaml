@@ -22,6 +22,7 @@ dependencies:
   google_sign_in: ^6.3.0
   cloud_firestore: ^5.6.6
   flutter_launcher_icons: ^0.14.3
+  rename_app: ^1.6.3
 
 dev_dependencies:
   flutter_test:
@@ -39,7 +40,7 @@ flutter:
 
 flutter_launcher_icons:
   adaptive_icon_foreground: "assets/icons/app_logo_transparent.png"
-  adaptive_icon_background: "#52A7E5"
+  adaptive_icon_background: "#52C1FF"
   image_path: "assets/icons/app_logo2.png"
   android: true
   ios: true
