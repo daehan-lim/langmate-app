@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lang_mate/core/services/auth_service.dart';
 import 'package:lang_mate/core/utils/snackbar_util.dart';
 
+import '../../data/model/app_user.dart';
 import '../../ui/pages/auth/login_page.dart';
+import '../../ui/pages/chat/chat_page.dart';
+import '../../ui/pages/welcome/welcome_page.dart';
 
 class UIUtil {
   static Widget buildLogOutIconButton (BuildContext context, AuthService authService) {
@@ -26,4 +29,16 @@ class UIUtil {
       tooltip: '로그아웃',
     );
   }
+
+  static void navigateBasedOnProfile(BuildContext context, AppUser? appUser) {
+    final hasLanguages = appUser?.nativeLanguage != null && appUser?.targetLanguage != null;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => hasLanguages ? const ChatPage() : const WelcomePage(),
+      ),
+    );
+  }
+
 }

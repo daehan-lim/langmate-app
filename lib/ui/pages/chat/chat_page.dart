@@ -3,21 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/app_providers.dart';
 import '../../../data/model/chat_message.dart';
 import '../../../data/model/chat_models.dart';
+import '../../user_global_view_model.dart';
 import 'chat_view_model.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
-  final String username;
-  final String location;
-  final String nativeLanguage;
-  final String targetLanguage;
+  // final String username;
+  // final String location;
+  // final String nativeLanguage;
+  // final String targetLanguage;
 
-  const ChatPage({
-    Key? key,
-    required this.username,
-    required this.location,
-    required this.nativeLanguage,
-    required this.targetLanguage,
-  }) : super(key: key);
+  const ChatPage({super.key});
 
   @override
   ChatPageState createState() => ChatPageState();
@@ -40,11 +35,12 @@ class ChatPageState extends ConsumerState<ChatPage> {
       // Firebase Auth에서 현재 사용자 ID 가져오기
       final authService = ref.read(authServiceProvider);
       final userId = authService.currentUser?.uid ?? 'anonymous';
+      final user = ref.read(userGlobalViewModelProvider);
 
       // ViewModel 초기화
       ref
           .read(chatViewModelProvider.notifier)
-          .initialize(userId, widget.username, widget.location);
+          .initialize(userId, user!.name, user.district!);
     });
   }
 
@@ -52,6 +48,7 @@ class ChatPageState extends ConsumerState<ChatPage> {
   Widget build(BuildContext context) {
     final chatState = ref.watch(chatViewModelProvider);
     final viewModel = ref.read(chatViewModelProvider.notifier);
+    final user = ref.watch(userGlobalViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +64,7 @@ class ChatPageState extends ConsumerState<ChatPage> {
               ),
             ),
             Text(
-              '${widget.location} · ${widget.nativeLanguage} → ${widget.targetLanguage}',
+              '${user!.district} · ${user.nativeLanguage} → ${user.targetLanguage}',
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 12,

@@ -1,12 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lang_mate/ui/pages/users/matched_users_page.dart';
+import 'package:lang_mate/core/utils/ui_util.dart';
 import '../../../app/app_providers.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../user_global_view_model.dart';
-import '../welcome/welcome_page.dart';
-import 'login_view_model.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
@@ -103,20 +100,10 @@ class LoginPage extends ConsumerWidget {
                                 final appUser = ref.read(
                                   userGlobalViewModelProvider,
                                 );
-                                if (appUser?.nativeLanguage != null &&
-                                    appUser?.targetLanguage != null) {
-                                  print("기존 사용자 - HomePage로 이동");
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (_) => MatchedUsersPage(),
-                                    ),
-                                  );
-                                } else {
-                                  print("신규 사용자 - WelcomePage로 이동");
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (_) => const WelcomePage(),
-                                    ),
+                                if (context.mounted) {
+                                  UIUtil.navigateBasedOnProfile(
+                                    context,
+                                    appUser,
                                   );
                                 }
                               } catch (e) {
