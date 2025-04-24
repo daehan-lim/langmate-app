@@ -37,7 +37,14 @@ class ChatPageState extends ConsumerState<ChatPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(chatViewModelProvider.notifier).loadInitialMessages();
+      // Firebase Auth에서 현재 사용자 ID 가져오기
+      final authService = ref.read(authServiceProvider);
+      final userId = authService.currentUser?.uid ?? 'anonymous';
+
+      // ViewModel 초기화
+      ref
+          .read(chatViewModelProvider.notifier)
+          .initialize(userId, widget.username, widget.location);
     });
   }
 
