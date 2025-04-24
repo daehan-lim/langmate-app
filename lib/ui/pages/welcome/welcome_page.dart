@@ -114,6 +114,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(
+                      labelText: '닉네임',
                       hintText: '사용할 이름을 입력해 주세요',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
