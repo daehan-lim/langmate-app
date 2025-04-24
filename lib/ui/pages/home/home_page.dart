@@ -7,6 +7,8 @@ import '../users/matched_users_page.dart';
 import 'home_view_model.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
