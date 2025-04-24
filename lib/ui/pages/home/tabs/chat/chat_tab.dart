@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../app/app_providers.dart';
-import '../../../core/utils/ui_util.dart';
-import '../../../data/model/chat_message.dart';
-import '../../user_global_view_model.dart';
+import '../../../../../app/app_providers.dart';
+import '../../../../../core/utils/ui_util.dart';
+import '../../../../../data/model/chat_message.dart';
+import '../../../../user_global_view_model.dart';
 import 'chat_view_model.dart';
 
-class ChatPage extends ConsumerStatefulWidget {
+class ChatTab extends ConsumerStatefulWidget {
   // final String username;
   // final String location;
   // final String nativeLanguage;
   // final String targetLanguage;
 
-  const ChatPage({super.key});
+  const ChatTab({super.key});
 
   @override
   ChatPageState createState() => ChatPageState();
 }
 
-class ChatPageState extends ConsumerState<ChatPage> {
+class ChatPageState extends ConsumerState<ChatTab> {
   final TextEditingController _messageController = TextEditingController();
 
   @override
@@ -51,105 +51,99 @@ class ChatPageState extends ConsumerState<ChatPage> {
     final user = ref.watch(userGlobalViewModelProvider);
     final authService = ref.read(authServiceProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        actions: [UIUtil.buildLogOutIconButton(context, authService)],
-        backgroundColor: Color(0xFFF8F9FA), //상대방 이름, 언어, 주소
-        title: Column(
-          children: [
-            Text(
-              '상대방', //매칭 된 사람으로 바꿔야 할 것.
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '${user!.district} · ${user.nativeLanguage} → ${user.targetLanguage}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
-          ), // 채팅 메시지 영역
-          // TODO Firebase, Time, chat 정보 가져오기
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: chatState.messages.length,
-              itemBuilder: (context, index) {
-                final message = chatState.messages[index];
-                return _buildMessageBubble(message, viewModel);
-              },
-            ),
-          ),
-          // 메시지 입력 영역
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    //엔터를 누르면 onSubmitted이 호출
-                    onSubmitted: (value) {
-                      if (value.trim().isNotEmpty) {
-                        viewModel.addMessage(value.trim());
-                        _messageController.clear();
-                      }
-                    },
-
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xFFF1F3F4),
-                      hintText: '메시지를 입력하세요',
-                      hintStyle: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 16,
-                      ),
-
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
+    return Column(
+      children: [
+        AppBar(
+          actions: [UIUtil.buildLogOutIconButton(context, authService)],
+          backgroundColor: Color(0xFFF8F9FA), //상대방 이름, 언어, 주소
+          title: Column(
+            children: [
+              Text(
+                '상대방', //매칭 된 사람으로 바꿔야 할 것.
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () {
-                    if (_messageController.text.isNotEmpty) {
-                      viewModel.addMessage(_messageController.text);
+              ),
+              Text(
+                '${user!.district} · ${user.nativeLanguage} → ${user.targetLanguage}',
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+        ), // 채팅 메시지 영역
+        // TODO Firebase, Time, chat 정보 가져오기
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: chatState.messages.length,
+            itemBuilder: (context, index) {
+              final message = chatState.messages[index];
+              return _buildMessageBubble(message, viewModel);
+            },
+          ),
+        ),
+        // 메시지 입력 영역
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _messageController,
+                  //엔터를 누르면 onSubmitted이 호출
+                  onSubmitted: (value) {
+                    if (value.trim().isNotEmpty) {
+                      viewModel.addMessage(value.trim());
                       _messageController.clear();
                     }
                   },
+
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: const Color(0xFFF1F3F4),
+                    hintText: '메시지를 입력하세요',
+                    hintStyle: TextStyle(color: Colors.grey[500], fontSize: 16),
+
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
-                //이미지 추가 버튼 추후 추가
-                IconButton(
-                  icon: const Icon(Icons.image),
-                  onPressed: () {
-                    print("이미지 선택 눌림");
-                  },
-                ),
-              ],
-            ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: () {
+                  if (_messageController.text.isNotEmpty) {
+                    viewModel.addMessage(_messageController.text);
+                    _messageController.clear();
+                  }
+                },
+              ),
+              //이미지 추가 버튼 추후 추가
+              IconButton(
+                icon: const Icon(Icons.image),
+                onPressed: () {
+                  print("이미지 선택 눌림");
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

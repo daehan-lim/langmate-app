@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../app/app_providers.dart';
-import '../../../data/model/chat_message.dart';
-import '../../../data/model/chat_models.dart';
+
+import '../../../../../app/app_providers.dart';
+import '../../../../../data/model/chat_message.dart';
+import '../../../../../data/model/chat_models.dart';
 
 // 채팅 페이지의 상태를 관리하는 클래스
 class ChatState {
