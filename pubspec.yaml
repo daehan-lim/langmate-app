@@ -22,6 +22,7 @@ dependencies:
   google_sign_in: ^6.3.0
   cloud_firestore: ^5.6.6
   flutter_launcher_icons: ^0.14.3
+  rename_app: ^1.6.3
 
 dev_dependencies:
   flutter_test:
