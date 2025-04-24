@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../app/app_providers.dart';
-import '../../data/model/app_user.dart';
-import '../pages/auth/login_page.dart';
-import '../pages/users/matched_users_page.dart';
-import '../pages/welcome/welcome_page.dart';
-import '../user_global_view_model.dart';
+import '../../../app/app_providers.dart';
+import '../../../data/model/app_user.dart';
+import '../../user_global_view_model.dart';
+import '../auth/login_page.dart';
+import '../users/matched_users_page.dart';
+import '../welcome/welcome_page.dart';
 
 class SplashPage extends ConsumerWidget {
   const SplashPage({super.key});
