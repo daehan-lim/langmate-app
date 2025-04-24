@@ -332,7 +332,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                       context,
                                       '위치 가져오기 버튼을 누르고 다시 시도해 주세요',
                                     );
-                                    return;
+                                    // return;  Uncomment later
                                   }
 
                                   final updatedUser = user.copyWith(
