@@ -43,12 +43,11 @@ class LoginPage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // 앱 로고나 이미지
-              Icon(
-                Icons.chat_sharp,
-                size: 100,
-                color: Colors.blue[400],
+              Image.asset(
+                'assets/icons/app_logo_rounded_border.png',
+                height: 120,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // 앱 이름 또는 환영 텍스트
               const Text(

@@ -38,6 +38,8 @@ flutter:
   uses-material-design: true
 
 flutter_launcher_icons:
-  image_path: "assets/icons/app_logo.png"
+  adaptive_icon_foreground: "assets/icons/app_logo_transparent.png"
+  adaptive_icon_background: "#52A7E5"
+  image_path: "assets/icons/app_logo2.png"
   android: true
   ios: true
