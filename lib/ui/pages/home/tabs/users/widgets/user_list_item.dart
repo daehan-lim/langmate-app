@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lang_mate/app/constants/app_styles.dart';
 import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
-import '../../../../app/constants/app_colors.dart';
-import '../../../../data/model/app_user.dart';
+import '../../../../../../app/constants/app_colors.dart';
+import '../../../../../../data/model/app_user.dart';
+
 
 class UserListItem extends StatelessWidget {
   final AppUser user;

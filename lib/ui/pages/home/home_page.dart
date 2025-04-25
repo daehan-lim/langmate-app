@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/ui/pages/home/tabs/chat/chat_tab.dart';
+import 'package:lang_mate/ui/pages/home/tabs/users/matched_users_tab.dart';
 import 'package:lang_mate/ui/pages/home/widgets/home_bottom_navigation_bar.dart';
 
-import '../users/matched_users_page.dart';
 import 'home_view_model.dart';
 
 class HomePage extends StatelessWidget {
@@ -19,9 +19,9 @@ class HomePage extends StatelessWidget {
           return IndexedStack(
             index: currentIndex,
             children: [
-              MatchedUsersPage(),
+              MatchedUsersTab(),
               ChatTab(),
-              MatchedUsersPage(),
+              MatchedUsersTab(),
             ],
           );
         },
