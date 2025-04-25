@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import '../../../../../core/utils/geolocator_util.dart';
 import '../../../../../app/app_providers.dart';
@@ -11,6 +15,7 @@ class WelcomeState {
   final String? errorMessage;
   final String? nativeLanguage; // 나의언어
   final String? targetLanguage; // 배울언어
+  final String? imageUrl;
 
   const WelcomeState({
     this.username,
@@ -19,6 +24,7 @@ class WelcomeState {
     this.errorMessage,
     this.nativeLanguage,
     this.targetLanguage,
+    this.imageUrl,
   });
 
   WelcomeState copyWith({
@@ -28,6 +34,7 @@ class WelcomeState {
     String? errorMessage,
     String? nativeLanguage,
     String? targetLanguage,
+    String? imageUrl,
   }) {
     return WelcomeState(
       username: username ?? this.username,
@@ -36,6 +43,7 @@ class WelcomeState {
       errorMessage: errorMessage, // 에러 메시지는 null로 재설정할 수 있도록 ?? 연산자 사용하지 않음
       nativeLanguage: nativeLanguage ?? this.nativeLanguage,
       targetLanguage: targetLanguage ?? this.targetLanguage,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }
@@ -105,6 +113,7 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
       );
     }
   }
+
   // 모국어 설정
   void setNativeLanguage(String language) {
     state = state.copyWith(nativeLanguage: language);
@@ -113,5 +122,23 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
   // 배우고자 하는 언어 설정
   void setTargetLanguage(String language) {
     state = state.copyWith(targetLanguage: language);
+  }
+
+  void uploadImage(XFile xfile) async {
+    try {
+      final storage = FirebaseStorage.instance;
+      Reference ref = storage.ref();
+      Reference fileRef = ref.child(
+        '${DateTime.now().microsecondsSinceEpoch}_${xfile.name}',
+      );
+      print('123');
+      await fileRef.putFile(File(xfile.path));
+      print('456');
+      // 5. 파일에 접근 할 수있는 URL 받기
+      String imageUrl = await fileRef.getDownloadURL();
+      state = state.copyWith(imageUrl: imageUrl);
+    } catch (e) {
+      print(e);
+    }
   }
 }
