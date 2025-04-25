@@ -29,10 +29,10 @@ class LoginViewModel extends Notifier<LoginState> {
 
     try {
       final firebaseUser = await _signInWithGoogle();
-
-      if (firebaseUser == null) {  // Could not log in
+      if (firebaseUser == null) {
         state = state.copyWith(isLoading: false);
-        throw Exception('로그인에 실패했습니다. 다시 시도해 주세요');
+        // 취소는 오류가 아니므로 예외를 던지지 않음
+        return;
       }
 
       final userRepository = ref.read(userRepositoryProvider);
@@ -51,7 +51,7 @@ class LoginViewModel extends Notifier<LoginState> {
 
       state = state.copyWith(isLoading: false);
     } catch (e) {
-      print(e.toString());
+      print("로그인 과정 중 오류: $e");
       state = state.copyWith(
         isLoading: false,
         errorMessage: '로그인에 실패했습니다. 다시 시도해 주세요',
@@ -74,5 +74,20 @@ class LoginViewModel extends Notifier<LoginState> {
       profileImage: firebaseUser.photoURL,
       email: firebaseUser.email ?? '',
     );
+  }
+  Future<bool> _checkUserExistsInFirestore(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return doc.exists;
+  }
+
+  Future<void> _loadFullProfileToGlobal(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    if (doc.exists) {
+      final fullUser = AppUser.fromMap(uid, doc.data()!);
+      ref.read(userGlobalViewModelProvider.notifier).setUser(fullUser);
+    }
   }
 }
