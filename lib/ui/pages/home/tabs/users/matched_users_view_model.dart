@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/app_providers.dart';
 
-import '../../../core/exceptions/data_exceptions.dart';
-import '../../../data/model/app_user.dart';
-import '../../user_global_view_model.dart';
+import '../../../../../core/exceptions/data_exceptions.dart';
+import '../../../../../data/model/app_user.dart';
+import '../../../../user_global_view_model.dart';
 
 class MatchedUsersViewModel extends Notifier<AsyncValue<List<AppUser>>> {
   @override

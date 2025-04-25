@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lang_mate/app/constants/app_styles.dart';
 import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
-import '../../../../app/constants/app_colors.dart';
-import '../../../../data/model/app_user.dart';
+import '../../../../../../app/constants/app_colors.dart';
+import '../../../../../../data/model/app_user.dart';
+import 'list_text_button.dart';
 
 class UserListItem extends StatelessWidget {
   final AppUser user;
@@ -22,18 +23,13 @@ class UserListItem extends StatelessWidget {
         children: [
           ClipOval(
             child: AppCachedImage(
-              imageUrl: user.profileImage ?? 'https://picsum.photos/200/200?random=1',
+              imageUrl:
+                  user.profileImage ?? 'https://picsum.photos/200/200?random=1',
               width: 66,
               height: 66,
               fit: BoxFit.cover,
             ),
           ),
-          // CircleAvatar(
-          //   radius: 33,
-          //   backgroundImage: NetworkImage(
-          //     user.profileImage ?? 'https://picsum.photos/200/200?random=1',
-          //   ),
-          // ),
           const SizedBox(width: 12),
 
           // Info column
@@ -41,34 +37,8 @@ class UserListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name and distance
-                Text(
-                  user.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 4),
-
-                // Language exchange
-                Row(
-                  children: [
-                    Text(
-                      user.nativeLanguage ?? '',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(width: 5),
-                    Icon(Icons.sync_alt_outlined, color: Colors.black, size: 17),
-                    const SizedBox(width: 5),
-                    Text(
-                      user.targetLanguage ?? '',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ],
-                ),
-
+                // Name, language, chat button
+                _buildTopRow(),
                 const SizedBox(height: 4),
 
                 // District
@@ -87,7 +57,7 @@ class UserListItem extends StatelessWidget {
                     Text(
                       '8.3 km', // replace with actual distance
                       style: AppStyles.usersListText,
-                    )
+                    ),
                   ],
                 ),
 
@@ -109,6 +79,50 @@ class UserListItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Row _buildTopRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Name
+              Text(
+                user.name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+
+              // Language exchange
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.nativeLanguage ?? '',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(width: 5),
+                  Icon(Icons.sync_alt_outlined, color: Colors.black, size: 17),
+                  const SizedBox(width: 5),
+                  Text(
+                    user.targetLanguage ?? '',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        Spacer(),
+        ListTextButton('채팅'),
+      ],
     );
   }
 }
