@@ -3,6 +3,7 @@ import 'package:lang_mate/app/app_providers.dart';
 
 import '../../../core/exceptions/data_exceptions.dart';
 import '../../../data/model/app_user.dart';
+import '../../user_global_view_model.dart';
 
 class MatchedUsersViewModel extends Notifier<AsyncValue<List<AppUser>>> {
   @override
@@ -12,11 +13,12 @@ class MatchedUsersViewModel extends Notifier<AsyncValue<List<AppUser>>> {
   }
 
   Future<void> fetchNearbyUsers() async {
-    // state = AsyncLoading();
+    state = AsyncLoading();
     try {
+      final currentUser = ref.read(userGlobalViewModelProvider)!;
       List<AppUser> users = await ref
           .read(userRepositoryProvider)
-          .getNearbyUsers('1', '은평구');
+          .getNearbyUsers(currentUser);
       state = AsyncData(users);
     } on ApiException catch (e) {
       print(e);
