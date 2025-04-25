@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import 'package:lang_mate/core/utils/ui_util.dart';
 import '../../../core/utils/snackbar_util.dart';
@@ -88,7 +89,9 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   const SizedBox(height: 30),
                   // 사용자 아이콘
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      ImagePicker imagePicker = ImagePicker();
+                    },
                     child: Center(
                       child:
                           user?.profileImage != null
