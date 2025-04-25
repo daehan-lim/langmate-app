@@ -1,5 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import '../../../../../core/utils/geolocator_util.dart';
 import '../../../../../app/app_providers.dart';
@@ -40,10 +41,10 @@ class WelcomeState {
     );
   }
 
-  void uploadImage() async {
+  void uploadImage(XFile xfile) async {
     final storage = FirebaseStorage.instance;
     Reference ref = storage.ref();
-    // 3. 파일 참조 만들기
+    ref.child('${DateTime.now().microsecondsSinceEpoch}_${xfile.name}');
     // 4. 쓰기
     // 5. 파일에 접근 할 수있는 URL만들기
   }
