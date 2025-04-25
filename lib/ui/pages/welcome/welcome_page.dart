@@ -89,9 +89,12 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   const SizedBox(height: 30),
                   // 사용자 아이콘
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       ImagePicker imagePicker = ImagePicker();
-                      imagePicker.pickImage(source: ImageSource.gallery);
+                      XFile? xFile = await imagePicker.pickImage(
+                        source: ImageSource.gallery,
+                      );
+                      print('경로 : ${xFile?.path}');
                     },
                     child: Center(
                       child:
