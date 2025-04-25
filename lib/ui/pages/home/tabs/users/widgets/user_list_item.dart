@@ -5,7 +5,6 @@ import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 import '../../../../../../app/constants/app_colors.dart';
 import '../../../../../../data/model/app_user.dart';
 
-
 class UserListItem extends StatelessWidget {
   final AppUser user;
 
@@ -23,7 +22,8 @@ class UserListItem extends StatelessWidget {
         children: [
           ClipOval(
             child: AppCachedImage(
-              imageUrl: user.profileImage ?? 'https://picsum.photos/200/200?random=1',
+              imageUrl:
+                  user.profileImage ?? 'https://picsum.photos/200/200?random=1',
               width: 66,
               height: 66,
               fit: BoxFit.cover,
@@ -43,29 +43,70 @@ class UserListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Name and distance
-                Text(
-                  user.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 4),
-
-                // Language exchange
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      user.nativeLanguage ?? '',
-                      style: TextStyle(fontSize: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Name
+                          Text(
+                            user.name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+
+                          // Language exchange
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user.nativeLanguage ?? '',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(width: 5),
+                              Icon(
+                                Icons.sync_alt_outlined,
+                                color: Colors.black,
+                                size: 17,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                user.targetLanguage ?? '',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 5),
-                    Icon(Icons.sync_alt_outlined, color: Colors.black, size: 17),
-                    const SizedBox(width: 5),
-                    Text(
-                      user.targetLanguage ?? '',
-                      style: TextStyle(fontSize: 14),
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 6,
+                        ),
+                        backgroundColor: Colors.blue.withValues(alpha: 0.05),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        minimumSize: Size.zero,
+                      ),
+                      child: Text(
+                        '채팅',
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -88,7 +129,7 @@ class UserListItem extends StatelessWidget {
                     Text(
                       '8.3 km', // replace with actual distance
                       style: AppStyles.usersListText,
-                    )
+                    ),
                   ],
                 ),
 
