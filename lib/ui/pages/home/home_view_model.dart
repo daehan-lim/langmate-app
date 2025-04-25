@@ -2,7 +2,7 @@
 // 2. 뷰모델 만들기
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeViewModel extends Notifier<int> {
+class HomeViewModel extends AutoDisposeNotifier<int> {
   @override
   int build() {
     return 0;
@@ -13,6 +13,6 @@ class HomeViewModel extends Notifier<int> {
   }
 }
 
-final homeViewModelProvider = NotifierProvider<HomeViewModel, int>(() {
+final homeViewModelProvider = AutoDisposeNotifierProvider<HomeViewModel, int>(() {
   return HomeViewModel();
 });
