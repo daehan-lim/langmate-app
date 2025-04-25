@@ -42,7 +42,7 @@ class WelcomeState {
 
   void uploadImage() async {
     final storage = FirebaseStorage.instance;
-    // 2. 스토리지 참조 만들기
+    Reference ref = storage.ref();
     // 3. 파일 참조 만들기
     // 4. 쓰기
     // 5. 파일에 접근 할 수있는 URL만들기
