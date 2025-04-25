@@ -44,8 +44,11 @@ class WelcomeState {
   void uploadImage(XFile xfile) async {
     final storage = FirebaseStorage.instance;
     Reference ref = storage.ref();
-    ref.child('${DateTime.now().microsecondsSinceEpoch}_${xfile.name}');
+    Reference fileRef = ref.child(
+      '${DateTime.now().microsecondsSinceEpoch}_${xfile.name}',
+    );
     // 4. 쓰기
+
     // 5. 파일에 접근 할 수있는 URL만들기
   }
 }
