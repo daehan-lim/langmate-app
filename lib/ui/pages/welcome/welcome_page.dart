@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import 'package:lang_mate/core/utils/ui_util.dart';
+import 'package:lang_mate/ui/pages/welcome/welcome_view_model.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
 import '../../user_global_view_model.dart';
@@ -45,7 +46,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
     final authService = ref.read(authServiceProvider);
     // final user = authService.currentUser;
     final user = ref.watch(userGlobalViewModelProvider);
-
+    final welcomeViewModel = ref.read(welcomeViewModelProvider.notifier);
     // 에러 메시지 처리
     if (welcomeState.errorMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -94,14 +95,23 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                       XFile? xFile = await imagePicker.pickImage(
                         source: ImageSource.gallery,
                       );
-                      print('경로 : ${xFile?.path}');
+                      if (xFile != null) {
+                        print(xFile.path);
+                        welcomeViewModel.uploadImage(xFile);
+                      }
                     },
                     child: Center(
                       child:
-                          user?.profileImage != null
+                          // welcomeState.imageUrl이 null이 아니면 welcomeStateUrl 이미지 뿌려주기
+                          //null 일 경우 user에 profile이미지 그대로 뿌려주기
+                          // 유저에 프로파일 이미지가 널 이면 아이콘 펄슨 뿌려주기
+                          welcomeState.imageUrl != null ||
+                                  user?.profileImage != null
                               ? ClipOval(
                                 child: AppCachedImage(
-                                  imageUrl: user!.profileImage!,
+                                  imageUrl:
+                                      welcomeState.imageUrl ??
+                                      user!.profileImage!,
                                   width: 120,
                                   height: 120,
                                   fit: BoxFit.cover,
