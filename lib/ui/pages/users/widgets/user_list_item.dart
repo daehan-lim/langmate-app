@@ -14,7 +14,9 @@ class UserListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       highlightColor: AppColors.lightGrey,
-      onTap: () {},
+      onTap: () {
+        // addDebugUsersFromJson(context);
+      },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
