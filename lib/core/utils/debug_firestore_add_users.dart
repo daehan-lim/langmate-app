@@ -62,8 +62,8 @@ const Json4UsersUnknownLocation = '''
   "users": {
     "user_11": {
       "name": "Michael M",
-      "nativeLanguage": "한국어",
-      "targetLanguage": "영어",
+      "nativeLanguage": "영어",
+      "targetLanguage": "한국어",
       "district": "테스트 위치 바꾸기",
       "bio": "영화를 보면서 언어를 공부해요.",
       "partnerPreference": "가벼운 대화를 즐기는 분이면 좋겠어요.",
@@ -74,8 +74,8 @@ const Json4UsersUnknownLocation = '''
     },
     "user_12": {
       "name": "Jessica J",
-      "nativeLanguage": "한국어",
-      "targetLanguage": "영어",
+      "nativeLanguage": "영어",
+      "targetLanguage": "한국어",
       "district": "테스트 위치 바꾸기",
       "bio": "언제든지 자유롭게 대화하고 싶어요.",
       "partnerPreference": "비슷한 관심사를 가진 분이면 좋겠어요.",
@@ -86,8 +86,8 @@ const Json4UsersUnknownLocation = '''
     },
     "user_13": {
       "name": "Emma E",
-      "nativeLanguage": "한국어",
-      "targetLanguage": "영어",
+      "nativeLanguage": "영어",
+      "targetLanguage": "한국어",
       "district": "테스트 위치 바꾸기",
       "bio": "책을 좋아해서 책 얘기를 자주 해요.",
       "partnerPreference": "정기적으로 연락할 수 있는 분을 찾고 있어요.",
@@ -98,8 +98,8 @@ const Json4UsersUnknownLocation = '''
     },
     "user_14": {
       "name": "Ashley A",
-      "nativeLanguage": "한국어",
-      "targetLanguage": "영어",
+      "nativeLanguage": "영어",
+      "targetLanguage": "한국어",
       "district": "테스트 위치 바꾸기",
       "bio": "산책하면서 대화하는 걸 선호해요.",
       "partnerPreference": "전화 통화도 가능한 분이면 좋겠어요.",
