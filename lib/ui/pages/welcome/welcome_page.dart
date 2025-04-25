@@ -91,6 +91,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   GestureDetector(
                     onTap: () {
                       ImagePicker imagePicker = ImagePicker();
+                      imagePicker.pickImage(source: ImageSource.gallery);
                     },
                     child: Center(
                       child:
