@@ -16,7 +16,7 @@ class AppUser {
   AppUser({
     required this.id,
     required this.name,
-    required this.createdAt,
+    DateTime? createdAt,
     this.email,
     this.district,
     this.profileImage,
@@ -25,7 +25,7 @@ class AppUser {
     this.bio,
     this.age,
     this.partnerPreference,
-  });
+  }) : createdAt = createdAt ?? DateTime.now();
 
   AppUser copyWith({
     String? name,
