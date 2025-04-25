@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/app_providers.dart';
@@ -25,57 +24,31 @@ class LoginViewModel extends Notifier<LoginState> {
     return const LoginState();
   }
 
-  // 구글 로그인 처리
-  Future<User?> signInWithGoogle() async {
-    try {
-      state = state.copyWith(isLoading: true, errorMessage: null);
-
-      final authService = ref.read(authServiceProvider);
-      final result = await authService.signInWithGoogle();
-
-      state = state.copyWith(isLoading: false);
-      return result?.user;
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: '로그인 중 오류가 발생했습니다: ${e.toString()}',
-      );
-      return null;
-    }
-  }
-
   Future<void> signInAndPrepareUser() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       final firebaseUser = await _signInWithGoogle();
-
       if (firebaseUser == null) {
-        // 사용자가 로그인을 취소한 경우 - 조용히 처리
         state = state.copyWith(isLoading: false);
         // 취소는 오류가 아니므로 예외를 던지지 않음
         return;
       }
 
-      // Build partial user and set to global state
+      final userRepository = ref.read(userRepositoryProvider);
+      final userGlobalViewModel = ref.read(userGlobalViewModelProvider.notifier);
       final partialUser = _buildPartialAppUser(firebaseUser);
-      ref.read(userGlobalViewModelProvider.notifier).setUser(partialUser);
+      userGlobalViewModel.setUser(partialUser);
 
-      final exists = await _checkUserExistsInFirestore(partialUser.id);
-      if (exists) {
-        await _loadFullProfileToGlobal(partialUser.id);
-      } else {
+      final fullUser = await userRepository.getUserById(partialUser.id);
+      if (fullUser != null) {  // User exists in backend
+        print("기존의 사용자 - Firestore에서 정보 가져옴");
+        userGlobalViewModel.setUser(fullUser);
+      } else {  // User is new sign up. Add to backend
         print("신규 사용자 - Firestore에 기본 정보 저장");
-
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(partialUser.id)
-            .set({
-              'name': partialUser.name,
-              'profileImage': partialUser.profileImage,
-              'email': partialUser.email,
-            });
+        await userRepository.createUserIfNotExists(partialUser);
       }
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       print("로그인 과정 중 오류: $e");
@@ -97,11 +70,11 @@ class LoginViewModel extends Notifier<LoginState> {
     return AppUser(
       id: firebaseUser.uid,
       name: firebaseUser.displayName ?? '',
+      createdAt: DateTime.now(),
       profileImage: firebaseUser.photoURL,
       email: firebaseUser.email ?? '',
     );
   }
-
   Future<bool> _checkUserExistsInFirestore(String uid) async {
     final doc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();

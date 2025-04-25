@@ -1,13 +1,72 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../model/app_user.dart';
 
 abstract class UserRepository {
-  Future<List<AppUser>> getNearbyUsers(String userId, String district);
+  Future<List<AppUser>> getNearbyUsers(AppUser user);
+
+  Future<bool> userExists(String uid);
+
+  Future<AppUser?> getUserById(String uid);
+
+  Future<void> createUserIfNotExists(AppUser user);
 }
 
-class UserRepositoryMock implements UserRepository {
+class UserRepositoryFirebase implements UserRepository {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
-  Future<List<AppUser>> getNearbyUsers(String userId, String district) async {
+  Future<List<AppUser>> getNearbyUsers(AppUser user) async {
+    final snapshot =
+        await _firestore
+            .collection('users')
+            .where('district', isEqualTo: user.district)
+            .where('nativeLanguage', isEqualTo: user.targetLanguage)
+            .where('targetLanguage', isEqualTo: user.nativeLanguage)
+            .get();
+    return List<AppUser>.from(
+      snapshot.docs
+          .where((queryDocumentSnapshot) => queryDocumentSnapshot.id != user.id)
+          .map((queryDocumentSnapshot) {
+            return AppUser.fromMap(
+              queryDocumentSnapshot.id,
+              queryDocumentSnapshot.data(),
+            );
+          }),
+    );
+  }
+
+  @override
+  Future<bool> userExists(String uid) async {
+    final doc = await _firestore.collection('users').doc(uid).get();
+    return doc.exists;
+  }
+
+  @override
+  Future<AppUser?> getUserById(String uid) async {
+    final doc = await _firestore.collection('users').doc(uid).get();
+    if (doc.exists) {
+      return AppUser.fromMap(uid, doc.data()!);
+    }
+    return null;
+  }
+
+  @override
+  Future<void> createUserIfNotExists(AppUser user) async {
+    await _firestore.collection('users').doc(user.id).set({
+      'name': user.name,
+      'profileImage': user.profileImage,
+      'email': user.email,
+      'createdAt': user.createdAt.toIso8601String(),
+    });
+  }
+}
+
+/*class UserRepositoryMock implements UserRepository {
+  @override
+  Future<List<AppUser>> getNearbyUsers(AppUser user) async {
     await Future.delayed(Duration(seconds: 1));
+    // return [];
     return [
       AppUser(
         id: '1',
@@ -77,4 +136,4 @@ class UserRepositoryMock implements UserRepository {
       ),
     ];
   }
-}
+}*/

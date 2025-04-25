@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,8 +15,8 @@ class SplashPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(authStateProvider, (prev, next) {
-      next.whenData((user) async {
-        if (user == null) {
+      next.whenData((firebaseUser) async {
+        if (firebaseUser == null) {
           // Not logged in → go to login page
           Navigator.pushReplacement(
             context,
@@ -23,29 +24,30 @@ class SplashPage extends ConsumerWidget {
           );
         } else {
           // Logged in → check Firestore profile
-          final doc =
-              await FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(user.uid)
-                  .get();
-
-          if (!doc.exists) {
+          final appUser = await ref
+              .read(userRepositoryProvider)
+              .getUserById(firebaseUser.uid);
+          if (appUser == null) {
+            // User not in Firestore → log out
             await ref.read(authServiceProvider).signOut();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const LoginPage()),
             );
             return;
+          } else {
+            // User in Firestore. Check if profile completed and navigate to WelcomePage or HomePage
+            ref.read(userGlobalViewModelProvider.notifier).setUser(appUser);
+            if (context.mounted) {
+              UIUtil.navigateBasedOnProfile(context, appUser);
+            }
           }
-
-          final appUser = AppUser.fromMap(user.uid, doc.data()!);
-          ref.read(userGlobalViewModelProvider.notifier).setUser(appUser);
-
-          if (context.mounted) UIUtil.navigateBasedOnProfile(context, appUser);
         }
       });
     });
 
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return const Scaffold(
+      body: Center(child: CupertinoActivityIndicator(radius: 20)),
+    );
   }
 }

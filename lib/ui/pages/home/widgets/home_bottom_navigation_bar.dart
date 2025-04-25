@@ -35,6 +35,7 @@ class HomeBottomNavigationBar extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             unselectedLabelStyle: const TextStyle(fontSize: 12),
+            selectedItemColor: Colors.blueAccent,
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.people_outline),

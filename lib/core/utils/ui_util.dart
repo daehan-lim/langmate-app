@@ -36,7 +36,7 @@ class UIUtil {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => hasLanguages ? HomePage() : const WelcomePage(),
+        builder: (_) => hasLanguages ? const HomePage() : const WelcomePage(),
       ),
     );
   }
