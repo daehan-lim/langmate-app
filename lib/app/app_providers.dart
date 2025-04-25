@@ -31,7 +31,7 @@ final locationRepositoryProvider = Provider<LocationRepository>((ref) {
 });
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return UserRepositoryMock();
+  return UserRepositoryFirebase();
 });
 
 

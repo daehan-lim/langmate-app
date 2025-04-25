@@ -77,6 +77,7 @@ class LoginViewModel extends Notifier<LoginState> {
     return AppUser(
       id: firebaseUser.uid,
       name: firebaseUser.displayName ?? '',
+      createdAt: DateTime.now(),
       profileImage: firebaseUser.photoURL,
       email: firebaseUser.email ?? '',
     );

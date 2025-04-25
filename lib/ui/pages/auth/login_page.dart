@@ -19,42 +19,6 @@ class LoginPage extends ConsumerWidget {
       });
     }
 
-    // 로그인 상태 확인 (authStateProvider 사용)
-    /*ref.listen(authStateProvider, (previous, next) {
-      print("authStateProvider 변경 감지됨: $previous -> $next");
-      next.whenData((user) async {
-        print("authStateProvider 데이터: ${user?.displayName ?? '로그인 안됨'}");
-        if (user != null) {
-          print("로그인 성공: ${user.displayName}, uid: ${user.uid}");
-          final doc = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-
-          if (doc.exists) {
-            final appUser = AppUser.fromMap(user.uid, doc.data()!);
-            ref.read(userGlobalViewModelProvider.notifier).setUser(appUser);
-
-            if (appUser.nativeLanguage != null &&
-                appUser.targetLanguage != null) {
-              print("기존 사용자 - HomePage로 이동");
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const MatchedUsersPage()),
-              );
-            } else {
-              print("사용자 정보 미완성 - WelcomePage로 이동");
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const WelcomePage()),
-              );
-            }
-          } else {
-            print("Firestore에 사용자 정보 없음 - 로그아웃 처리");
-            await ref.read(authServiceProvider).signOut();
-          }
-        }
-      });
-    });*/
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
