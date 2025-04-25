@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,9 +49,9 @@ class WelcomeState {
     Reference fileRef = ref.child(
       '${DateTime.now().microsecondsSinceEpoch}_${xfile.name}',
     );
-    // 4. 쓰기
+    await fileRef.putFile(File(xfile.path));
 
-    // 5. 파일에 접근 할 수있는 URL만들기
+    // 5. 파일에 접근 할 수있는 URL 받기
   }
 }
 
