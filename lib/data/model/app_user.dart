@@ -75,4 +75,20 @@ class AppUser {
       partnerPreference: map['partnerPreference'],
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'createdAt': createdAt.toIso8601String(),
+      'email': email,
+      'district': district,
+      'profileImage': profileImage,
+      'nativeLanguage': nativeLanguage,
+      'targetLanguage': targetLanguage,
+      'bio': bio,
+      'age': age,
+      'partnerPreference': partnerPreference,
+    };
+  }
+
 }

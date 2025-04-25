@@ -56,7 +56,6 @@ class LoginPage extends ConsumerWidget {
                         loginState.isLoading
                             ? null
                             : () async {
-                              print("로그인 버튼 클릭됨");
                               try {
                                 await ref
                                     .read(loginViewModelProvider.notifier)
