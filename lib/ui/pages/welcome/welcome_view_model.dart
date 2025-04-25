@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import '../../../../../core/utils/geolocator_util.dart';
@@ -37,6 +38,14 @@ class WelcomeState {
       nativeLanguage: nativeLanguage ?? this.nativeLanguage,
       targetLanguage: targetLanguage ?? this.targetLanguage,
     );
+  }
+
+  void uploadImage() async {
+    final storage = FirebaseStorage.instance;
+    // 2. 스토리지 참조 만들기
+    // 3. 파일 참조 만들기
+    // 4. 쓰기
+    // 5. 파일에 접근 할 수있는 URL만들기
   }
 }
 
@@ -105,6 +114,7 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
       );
     }
   }
+
   // 모국어 설정
   void setNativeLanguage(String language) {
     state = state.copyWith(nativeLanguage: language);
