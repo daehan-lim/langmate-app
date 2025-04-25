@@ -44,14 +44,18 @@ class WelcomeState {
   }
 
   void uploadImage(XFile xfile) async {
-    final storage = FirebaseStorage.instance;
-    Reference ref = storage.ref();
-    Reference fileRef = ref.child(
-      '${DateTime.now().microsecondsSinceEpoch}_${xfile.name}',
-    );
-    await fileRef.putFile(File(xfile.path));
-
-    // 5. 파일에 접근 할 수있는 URL 받기
+    try {
+      final storage = FirebaseStorage.instance;
+      Reference ref = storage.ref();
+      Reference fileRef = ref.child(
+        '${DateTime.now().microsecondsSinceEpoch}_${xfile.name}',
+      );
+      await fileRef.putFile(File(xfile.path));
+      // 5. 파일에 접근 할 수있는 URL 받기
+      String imageUrl = await fileRef.getDownloadURL();
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
