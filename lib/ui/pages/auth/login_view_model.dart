@@ -51,8 +51,10 @@ class LoginViewModel extends Notifier<LoginState> {
       final firebaseUser = await _signInWithGoogle();
 
       if (firebaseUser == null) {
+        // 사용자가 로그인을 취소한 경우 - 조용히 처리
         state = state.copyWith(isLoading: false);
-        throw Exception('로그인에 실패했습니다. 다시 시도해 주세요');
+        // 취소는 오류가 아니므로 예외를 던지지 않음
+        return;
       }
 
       // Build partial user and set to global state
@@ -76,7 +78,7 @@ class LoginViewModel extends Notifier<LoginState> {
       }
       state = state.copyWith(isLoading: false);
     } catch (e) {
-      print(e.toString());
+      print("로그인 과정 중 오류: $e");
       state = state.copyWith(
         isLoading: false,
         errorMessage: '로그인에 실패했습니다. 다시 시도해 주세요',

@@ -92,24 +92,28 @@ class LoginPage extends ConsumerWidget {
                         loginState.isLoading
                             ? null
                             : () async {
-                              print("로그인 버튼 클릭됨");
-                              try {
-                                await ref
-                                    .read(loginViewModelProvider.notifier)
-                                    .signInAndPrepareUser();
-                                final appUser = ref.read(
-                                  userGlobalViewModelProvider,
-                                );
-                                if (context.mounted) {
-                                  UIUtil.navigateBasedOnProfile(
-                                    context,
-                                    appUser,
+                                print("로그인 버튼 클릭됨");
+                                try {
+                                  await ref
+                                      .read(loginViewModelProvider.notifier)
+                                      .signInAndPrepareUser();
+                                  
+                                  final appUser = ref.read(
+                                    userGlobalViewModelProvider,
                                   );
+                                  
+                                  // 사용자 정보가 설정된 경우에만 네비게이션
+                                  if (appUser != null && appUser.id.isNotEmpty && context.mounted) {
+                                    UIUtil.navigateBasedOnProfile(
+                                      context,
+                                      appUser,
+                                    );
+                                  }
+                                } catch (e) {
+                                  print("로그인 과정 중 오류 발생: $e");
+                                  // 오류는 이미 LoginViewModel에서 처리됨
                                 }
-                              } catch (e) {
-                                print("사용자 정보가 글로벌 상태에 없습니다. 네비게이션 중단. $e");
-                              }
-                            },
+                              },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black87,
