@@ -87,26 +87,29 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                   ),
                   const SizedBox(height: 30),
                   // 사용자 아이콘
-                  Center(
-                    child:
-                        user?.profileImage != null
-                            ? ClipOval(
-                              child: AppCachedImage(
-                                imageUrl: user!.profileImage!,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Center(
+                      child:
+                          user?.profileImage != null
+                              ? ClipOval(
+                                child: AppCachedImage(
+                                  imageUrl: user!.profileImage!,
+                                  width: 120,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                              : Container(
                                 width: 120,
                                 height: 120,
-                                fit: BoxFit.cover,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.person, size: 50),
                               ),
-                            )
-                            : Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.person, size: 50),
-                            ),
+                    ),
                   ),
                   const SizedBox(height: 30),
                   // 이름 입력 필드
@@ -338,7 +341,8 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                     name: _usernameController.text,
                                     nativeLanguage: welcomeState.nativeLanguage,
                                     targetLanguage: welcomeState.targetLanguage,
-                                    district: welcomeState.location ?? '테스트 위치 바꾸기',
+                                    district:
+                                        welcomeState.location ?? '테스트 위치 바꾸기',
                                   );
 
                                   try {
@@ -373,8 +377,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder:
-                                            (_) => const HomePage(),
+                                        builder: (_) => const HomePage(),
                                       ),
                                     );
                                   } catch (e) {
