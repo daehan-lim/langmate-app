@@ -357,8 +357,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                     name: _usernameController.text,
                                     nativeLanguage: welcomeState.nativeLanguage,
                                     targetLanguage: welcomeState.targetLanguage,
-                                    district:
-                                        welcomeState.location ?? '테스트 위치 바꾸기',
+                                    district: welcomeState.location ?? '서울특별시 강남구 청담동',
                                   );
 
                                   try {

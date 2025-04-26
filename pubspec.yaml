@@ -26,6 +26,7 @@ dependencies:
   rename_app: ^1.6.3
   image_picker: ^1.1.2
   firebase_storage: ^12.4.5
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
