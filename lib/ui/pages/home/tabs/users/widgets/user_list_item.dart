@@ -21,7 +21,7 @@ class UserListItem extends StatelessWidget {
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {
-        updateTestDistricts(context);
+        // updateTestDistricts(context);
         // addDebugUsersFromJson(context);
       },
       child: Row(
