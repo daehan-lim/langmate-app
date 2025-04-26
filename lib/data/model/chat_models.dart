@@ -1,4 +1,4 @@
-class Message {
+class MessageOriginal {
   final String id; // Firestore 문서 ID 저장용
   final String sender; // 보낸 사람 이름
   final String senderId; // 보낸 사람 ID
@@ -7,7 +7,7 @@ class Message {
   final DateTime timestamp; // 타임스탬프 (요구사항의 'createdAt'에 해당)
   final bool isRead; // 읽음 상태
 
-  Message({
+  MessageOriginal({
     required this.id,
     required this.sender,
     required this.senderId,
@@ -18,16 +18,16 @@ class Message {
   });
 
   // Firestore에서 데이터를 가져올 때 사용
-  factory Message.fromMap(Map<String, dynamic> map, String docId) {
-    return Message(
+  factory MessageOriginal.fromMap(Map<String, dynamic> map, String docId) {
+    return MessageOriginal(
       id: docId,
       sender: map['sender'] ?? '',
       senderId: map['senderId'] ?? '',
       text: map['message'] ?? '',
       address: map['address'] ?? '',
       timestamp:
-          map['createdAt'] != null
-              ? DateTime.parse(map['createdAt'])
+          map['lastTimestamp'] != null
+              ? DateTime.parse(map['lastTimestamp'])
               : DateTime.now(),
       isRead: map['isRead'] ?? false,
     );

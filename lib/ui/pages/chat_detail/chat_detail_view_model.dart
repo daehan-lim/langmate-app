@@ -126,7 +126,7 @@ class ChatViewModel extends AutoDisposeNotifier<ChatState> {
 
     try {
       final now = DateTime.now();
-      final message = Message(
+      final message = MessageOriginal(
         id: '', // Firestore에서 자동 생성될 ID
         sender: _currentUsername!,
         senderId: _currentUserId!,

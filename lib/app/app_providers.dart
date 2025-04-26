@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/data/repository/user_repository.dart';
 import '../data/repository/location_repository.dart';
-import '../ui/pages/home/tabs/chat/chat_view_model.dart';
 import '../ui/pages/welcome/welcome_view_model.dart';
 import '../core/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,10 +38,10 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
 final welcomeViewModelProvider =
     NotifierProvider<WelcomeViewModel, WelcomeState>(WelcomeViewModel.new);
 
-// 채팅 화면 관련 프로바이더
-final chatViewModelProvider = AutoDisposeNotifierProvider<ChatViewModel, ChatState>(
-  ChatViewModel.new,
-);
+// // 채팅 화면 관련 프로바이더
+// final chatViewModelProvider = AutoDisposeNotifierProvider<ChatViewModel, ChatState>(
+//   ChatViewModel.new,
+// );
 
 // 채팅 저장소 프로바이더
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
@@ -50,7 +49,7 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 });
 
 // 채팅 스트림 프로바이더
-final chatStreamProvider = StreamProvider.family<List<Message>, String>((
+final chatStreamProvider = StreamProvider.family<List<MessageOriginal>, String>((
   ref,
   address,
 ) {
