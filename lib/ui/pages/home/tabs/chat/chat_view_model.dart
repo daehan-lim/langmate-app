@@ -30,7 +30,7 @@ class ChatState {
 }
 
 // Riverpod Notifier 클래스로 상태 관리
-class ChatViewModel extends Notifier<ChatState> {
+class ChatViewModel extends AutoDisposeNotifier<ChatState> {
   String? _currentUserId;
   String? _currentUsername;
   String? _currentLocation;

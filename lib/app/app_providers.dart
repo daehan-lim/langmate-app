@@ -40,7 +40,7 @@ final welcomeViewModelProvider =
     NotifierProvider<WelcomeViewModel, WelcomeState>(WelcomeViewModel.new);
 
 // 채팅 화면 관련 프로바이더
-final chatViewModelProvider = NotifierProvider<ChatViewModel, ChatState>(
+final chatViewModelProvider = AutoDisposeNotifierProvider<ChatViewModel, ChatState>(
   ChatViewModel.new,
 );
 
