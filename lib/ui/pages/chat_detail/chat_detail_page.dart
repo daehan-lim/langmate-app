@@ -419,7 +419,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     final Map<String, List<ChatMessage>> grouped = {};
 
     for (final message in messages) {
-      final date = _formatMessageDate(message.createdAt);
+      final date = _formatDateForGroup(message.createdAt);
       if (!grouped.containsKey(date)) {
         grouped[date] = [];
       }
@@ -430,7 +430,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   }
 
   // Helper to format the date for grouping
-  String _formatMessageDate(DateTime dateTime) {
+  String _formatDateForGroup(DateTime dateTime) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(Duration(days: 1));
