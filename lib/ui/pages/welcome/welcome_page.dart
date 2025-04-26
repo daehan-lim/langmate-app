@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import 'package:lang_mate/core/utils/ui_util.dart';
-import 'package:lang_mate/ui/pages/welcome/welcome_view_model.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
 import '../../user_global_view_model.dart';
