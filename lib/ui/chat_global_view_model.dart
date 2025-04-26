@@ -1,15 +1,18 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
 
-import '../data/model/new/chat_room.dart';
-import '../data/repository/fake_chat_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/ui/user_global_view_model.dart';
+
+import '../app/app_providers.dart';
+import '../data/model/app_user.dart';
+import '../data/model/chat_message.dart';
+import '../data/model/chat_room.dart';
 
 class ChatGlobalState {
-  List<ChatRoom> chatRooms;
-  ChatRoom? currentChatRoom;
-  ChatGlobalState({
-    required this.chatRooms,
-    required this.currentChatRoom,
-  });
+  final List<ChatRoom> chatRooms;
+  final ChatRoom? currentChatRoom;
+
+  ChatGlobalState({required this.chatRooms, this.currentChatRoom});
 
   ChatGlobalState copyWith({
     List<ChatRoom>? chatRooms,
@@ -23,95 +26,114 @@ class ChatGlobalState {
 }
 
 class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
+  StreamSubscription<List<ChatRoom>>? _chatRoomsSubscription;
+  StreamSubscription<List<ChatMessage>>? _chatMessagesSubscription;
+
   @override
   ChatGlobalState build() {
-    fetchChatRooms();
-    return ChatGlobalState(
-      chatRooms: [],
-      currentChatRoom: null,
+    return ChatGlobalState(chatRooms: []);
+  }
+
+  void initialize(String userId) {
+    // Cancel previous subscriptions if they exist
+    _chatRoomsSubscription?.cancel();
+
+    // Get the chat repository
+    final chatRepository = ref.read(chatRepositoryProvider);
+
+    // Subscribe to chat rooms
+    _chatRoomsSubscription = chatRepository.getUserChatRooms(userId).listen((
+      chatRooms,
+    ) {
+      state = state.copyWith(chatRooms: chatRooms);
+    });
+
+    // Set up disposal
+    ref.onDispose(() {
+      _chatRoomsSubscription?.cancel();
+      _chatMessagesSubscription?.cancel();
+    });
+  }
+
+  Future<void> fetchChatDetail(String chatRoomId) async {
+    // Cancel previous messages subscription if exists
+    _chatMessagesSubscription?.cancel();
+
+    // Find the chat room in existing list
+    final chatRoom = state.chatRooms.firstWhere(
+      (room) => room.id == chatRoomId,
+      orElse: () => ChatRoom(
+        id: chatRoomId,
+        participants: [],
+        messages: [],
+        createdAt: DateTime.now(),
+      ),
     );
+
+    state = state.copyWith(currentChatRoom: chatRoom);
+
+    final chatRepository = ref.read(chatRepositoryProvider);
+
+    // Listen to messages for this chat room
+    _chatMessagesSubscription = chatRepository
+        .getChatMessages(chatRoomId)
+        .listen((messages) {
+          final updatedChatRoom = ChatRoom(
+            id: chatRoom.id,
+            participants: chatRoom.participants,
+            messages: messages,
+            createdAt: chatRoom.createdAt,
+          );
+
+          state = state.copyWith(currentChatRoom: updatedChatRoom);
+        });
   }
 
-  final chatRepository = FakeChatRepository();
+  Future<void> openChatWithUser(AppUser currentUser, AppUser otherUser) async {
+    final chatRepository = ref.read(chatRepositoryProvider);
 
-  Future<void> fetchChatRooms() async { // should be changed to use subscription and listen instead
-    final chatRooms = await chatRepository.getChatRooms();
-    if (chatRooms != null) {
-      state = state.copyWith(
-        chatRooms: chatRooms,
+    final chatRoomId = await chatRepository.createOrGetChatRoom(
+      currentUser,
+      otherUser,
+    );
+
+    // Fetch existing messages or create empty chat room
+    await fetchChatDetail(chatRoomId);
+
+    // If chat room is new, initialize with empty messages
+    if (state.currentChatRoom == null) {
+      final newChatRoom = ChatRoom(
+        id: chatRoomId,
+        participants: [currentUser, otherUser],
+        messages: [],
+        createdAt: DateTime.now(),
       );
+
+      state = state.copyWith(currentChatRoom: newChatRoom);
     }
   }
 
-  Future<void> fetchChatDetail(String roomId) async {
-    final currentChatRoom = await chatRepository.detail(roomId);
-    if (currentChatRoom != null) {
-      state = state.copyWith(
-        currentChatRoom: currentChatRoom,
+  Future<void> sendMessage(String content) async {
+    if (state.currentChatRoom == null) return;
+
+    final userViewModel = ref.read(userGlobalViewModelProvider);
+    if (userViewModel == null) return;
+
+    try {
+      final chatRepository = ref.read(chatRepositoryProvider);
+
+      await chatRepository.sendMessage(
+        chatRoomId: state.currentChatRoom!.id,
+        senderId: userViewModel.id,
+        content: content,
       );
+    } catch (e) {
+      print("Error sending message: $e");
     }
   }
-
-  // other methods like send message, create etc. need to be included
-
-
-  // ChatSocket? chatSocket;
-  //
-  // void connectSocket() {
-  //   chatSocket = chatRepository.connectSocket();
-  //   final subscription = chatSocket!.messageStream.listen((chatRoom) {
-  //     // 1. chatRooms 업데이트
-  //     final chatRooms = state.chatRooms;
-  //     final target =
-  //         chatRooms.where((e) => e.id == chatRoom.id).toList();
-  //     if (target.isNotEmpty) {
-  //       final newList = chatRooms.map((e) {
-  //         if (e.id == chatRoom.id) {
-  //           return chatRoom;
-  //         }
-  //         return e;
-  //       }).toList();
-  //       state = state.copyWith(
-  //         chatRooms: newList,
-  //       );
-  //     } else {
-  //       state = state.copyWith(
-  //         chatRooms: [...chatRooms, chatRoom],
-  //       );
-  //     }
-  //     // 2. chatRoom 업데이트
-  //     final room = state.currentChatRoom;
-  //     if (room?.id == chatRoom.id) {
-  //       //
-  //       state = state.copyWith(
-  //         chatRoom: ChatRoom(
-  //           id: room!.id,
-  //           product: room.product,
-  //           sender: room.sender,
-  //           messages: [...room.messages, chatRoom.messages.first],
-  //           createdAt: room.createdAt,
-  //         ),
-  //       );
-  //     }
-  //   });
-  //
-  //   ref.onDispose(() {
-  //     subscription.cancel();
-  //   });
-  // }
-
-  // void send(String content) {
-  //   final room = state.currentChatRoom;
-  //   if (room != null) {
-  //     chatSocket?.sendMessage(
-  //       content: content,
-  //       id: room.id,
-  //     );
-  //   }
-  // }
 }
 
 final chatGlobalViewModel =
-    NotifierProvider<ChatGlobalViewModel, ChatGlobalState>(() {
-  return ChatGlobalViewModel();
-});
+    NotifierProvider<ChatGlobalViewModel, ChatGlobalState>(
+      () => ChatGlobalViewModel(),
+    );

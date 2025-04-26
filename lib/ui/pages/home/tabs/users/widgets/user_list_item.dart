@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_styles.dart';
 import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
 import '../../../../../../app/constants/app_colors.dart';
 import '../../../../../../core/utils/debug_firestore_add_users.dart';
 import '../../../../../../data/model/app_user.dart';
+import '../../../../../chat_global_view_model.dart';
+import '../../../../../user_global_view_model.dart';
+import '../../../../chat_detail/chat_detail_page.dart';
 import 'list_text_button.dart';
 
 class UserListItem extends StatelessWidget {
@@ -17,6 +21,7 @@ class UserListItem extends StatelessWidget {
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {
+        updateTestDistricts(context);
         // addDebugUsersFromJson(context);
       },
       child: Row(
@@ -122,7 +127,29 @@ class UserListItem extends StatelessWidget {
           ),
         ),
         Spacer(),
-        ListTextButton('채팅'),
+        Consumer(
+          builder: (BuildContext context, WidgetRef ref, Widget? child) {
+            return ListTextButton(
+              '채팅',
+              onPressed: () {
+                final currentUser = ref.read(userGlobalViewModelProvider);
+                if (currentUser != null) {
+                  // Initialize chat with this user and navigate
+                  ref
+                      .read(chatGlobalViewModel.notifier)
+                      .openChatWithUser(currentUser, user);
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatDetailPage(user),
+                    ),
+                  );
+                }
+              },
+            );
+          },
+        ),
       ],
     );
   }

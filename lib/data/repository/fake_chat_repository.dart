@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:lang_mate/data/model/app_user.dart';
 
-import '../model/new/chat_message.dart';
-import '../model/new/chat_room.dart';
+import '../model/chat_message.dart';
+import '../model/chat_room.dart';
 
 class FakeChatRepository {
   Future<List<ChatRoom>?> getChatRooms() async {

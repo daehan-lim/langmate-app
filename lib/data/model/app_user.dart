@@ -10,7 +10,6 @@ class AppUser {
   final String? bio;
   final int? age;
   final String? partnerPreference;
-
   // final GeoPoint? location;
 
   AppUser({
@@ -68,10 +67,7 @@ class AppUser {
       nativeLanguage: map['nativeLanguage'],
       targetLanguage: map['targetLanguage'],
       bio: map['bio'],
-      age:
-          map['age'] is int
-              ? map['age']
-              : (map['age'] is String ? int.tryParse(map['age']) : null),
+      age: map['age'],
       partnerPreference: map['partnerPreference'],
     );
   }
@@ -90,5 +86,4 @@ class AppUser {
       'partnerPreference': partnerPreference,
     };
   }
-
 }

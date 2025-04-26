@@ -5,6 +5,33 @@ import 'package:flutter/material.dart';
 
 import '../../data/model/app_user.dart';
 
+void updateTestDistricts(BuildContext context) async {
+  try {
+    final firestore = FirebaseFirestore.instance;
+
+    final querySnapshot = await firestore
+        .collection('users')
+        .where('district', isEqualTo: '서울특별시 강남구 청담동')
+        .get();
+
+    for (final doc in querySnapshot.docs) {
+      await doc.reference.update({
+        'district': '서울특별시 강남구 청담동',
+      });
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('✅ All test districts updated successfully.')),
+    );
+  } catch (e) {
+    print('🔥 Error updating test districts: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('❌ Failed to update districts: ${e.toString()}')),
+    );
+  }
+}
+
+
 void removeDebugUsers(BuildContext context) async {
   try {
     final firestore = FirebaseFirestore.instance;
@@ -64,7 +91,7 @@ const Json4UsersUnknownLocation = '''
       "name": "Michael M",
       "nativeLanguage": "영어",
       "targetLanguage": "한국어",
-      "district": "테스트 위치 바꾸기",
+      "district": "서울특별시 강남구 청담동",
       "bio": "영화를 보면서 언어를 공부해요.",
       "partnerPreference": "가벼운 대화를 즐기는 분이면 좋겠어요.",
       "age": 24,
@@ -76,7 +103,7 @@ const Json4UsersUnknownLocation = '''
       "name": "Jessica J",
       "nativeLanguage": "영어",
       "targetLanguage": "한국어",
-      "district": "테스트 위치 바꾸기",
+      "district": "서울특별시 강남구 청담동",
       "bio": "언제든지 자유롭게 대화하고 싶어요.",
       "partnerPreference": "비슷한 관심사를 가진 분이면 좋겠어요.",
       "age": 24,
@@ -88,7 +115,7 @@ const Json4UsersUnknownLocation = '''
       "name": "Emma E",
       "nativeLanguage": "영어",
       "targetLanguage": "한국어",
-      "district": "테스트 위치 바꾸기",
+      "district": "서울특별시 강남구 청담동",
       "bio": "책을 좋아해서 책 얘기를 자주 해요.",
       "partnerPreference": "정기적으로 연락할 수 있는 분을 찾고 있어요.",
       "age": 38,
@@ -100,7 +127,7 @@ const Json4UsersUnknownLocation = '''
       "name": "Ashley A",
       "nativeLanguage": "영어",
       "targetLanguage": "한국어",
-      "district": "테스트 위치 바꾸기",
+      "district": "서울특별시 강남구 청담동",
       "bio": "산책하면서 대화하는 걸 선호해요.",
       "partnerPreference": "전화 통화도 가능한 분이면 좋겠어요.",
       "age": 37,
