@@ -20,7 +20,6 @@ class ChatDetailPage extends ConsumerStatefulWidget {
 class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  bool _isFirstLoad = true;
 
   @override
   void initState() {
@@ -69,16 +68,15 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     // Listen for changes to scroll to bottom on new messages
     ref.listen(chatGlobalViewModel, (previous, current) {
       if (previous?.currentChatRoom?.messages.length !=
-              current.currentChatRoom?.messages.length &&
-          !_isFirstLoad) {
+              current.currentChatRoom?.messages.length) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottom();
         });
       }
 
-      if (_isFirstLoad && current.currentChatRoom != null) {
-        _isFirstLoad = false;
-      }
+      // if (_isFirstLoad && current.currentChatRoom != null) {
+      //   _isFirstLoad = false;
+      // }
     });
 
     if (appUser == null) {
