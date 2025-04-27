@@ -40,14 +40,14 @@ class ChatRepositoryFirebase implements ChatRepository {
         await _firestore.collection('chatRooms').doc(chatRoomId).get();
 
     if (!chatRoomDoc.exists) {
-      print('exists');
+      print('Chatroom exists');
       // Create new chat room if it doesn't exist
       await _firestore.collection('chatRooms').doc(chatRoomId).set({
         'participants': sortedUserIds,
         'createdAt': DateTime.now().toIso8601String(),
       });
     }
-    print('not exists');
+    print('Chatroom not exists');
 
     return chatRoomId;
   }

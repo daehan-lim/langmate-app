@@ -64,11 +64,12 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     final appUser = ref.watch(userGlobalViewModelProvider);
     final chatState = ref.watch(chatGlobalViewModel);
     final chatRoom = chatState.currentChatRoom;
+    print(chatRoom?.id);
 
     // Listen for changes to scroll to bottom on new messages
     ref.listen(chatGlobalViewModel, (previous, current) {
       if (previous?.currentChatRoom?.messages.length !=
-          current.currentChatRoom?.messages.length &&
+              current.currentChatRoom?.messages.length &&
           !_isFirstLoad) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottom();
@@ -81,9 +82,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     });
 
     if (appUser == null) {
-      return const Scaffold(
-        body: Center(child: Text('사용자 정보를 찾을 수 없습니다')),
-      );
+      return const Scaffold(body: Center(child: Text('사용자 정보를 찾을 수 없습니다')));
     }
 
     if (chatRoom == null) {
@@ -96,9 +95,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
             child: SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Center(
-                  child: CupertinoActivityIndicator(radius: 12),
-                ),
+                child: Center(child: CupertinoActivityIndicator(radius: 12)),
               ),
             ),
           ),
@@ -117,9 +114,10 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
           children: [
             // Messages area
             Expanded(
-              child: chatRoom.messages.isEmpty
-                  ? _buildEmptyChatView()
-                  : _buildMessagesList(groupedMessages, appUser),
+              child:
+                  chatRoom.messages.isEmpty
+                      ? _buildEmptyChatView()
+                      : _buildMessagesList(groupedMessages, appUser),
             ),
             // Message input area
             _buildMessageInput(),
@@ -170,43 +168,35 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ClipOval(
-            child: widget.otherUser.profileImage != null
-                ? AppCachedImage(
-              imageUrl: widget.otherUser.profileImage!,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-            )
-                : Container(
-              width: 80,
-              height: 80,
-              color: Colors.grey[200],
-              child: Icon(Icons.person, size: 40, color: Colors.grey),
-            ),
+            child:
+                widget.otherUser.profileImage != null
+                    ? AppCachedImage(
+                      imageUrl: widget.otherUser.profileImage!,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    )
+                    : Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey[200],
+                      child: Icon(Icons.person, size: 40, color: Colors.grey),
+                    ),
           ),
           SizedBox(height: 16),
           Text(
             widget.otherUser.name,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
           Text(
             '${widget.otherUser.nativeLanguage ?? ''} → ${widget.otherUser.targetLanguage ?? ''}',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[700],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
           ),
           SizedBox(height: 24),
           Text(
             '대화를 시작해보세요!',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -214,9 +204,9 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   }
 
   Widget _buildMessagesList(
-      Map<String, List<ChatMessage>> groupedMessages,
-      AppUser currentUser
-      ) {
+    Map<String, List<ChatMessage>> groupedMessages,
+    AppUser currentUser,
+  ) {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(16.0),
@@ -236,8 +226,8 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
               final message = entry.value;
 
               // Determine if this is the first message from this sender in a sequence
-              final isFirstInSequence = i == 0 ||
-                  messages[i - 1].senderId != message.senderId;
+              final isFirstInSequence =
+                  i == 0 || messages[i - 1].senderId != message.senderId;
 
               return _buildMessageBubble(
                 message: message,
@@ -261,10 +251,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               date,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
             ),
           ),
           Expanded(child: Divider(color: Colors.grey[300])),
@@ -285,25 +272,26 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
       ),
       child: Row(
         mainAxisAlignment:
-        isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Avatar for other user's first message in a sequence
           if (!isCurrentUser && isFirstInSequence)
             ClipOval(
-              child: widget.otherUser.profileImage != null
-                  ? AppCachedImage(
-                imageUrl: widget.otherUser.profileImage!,
-                width: 32,
-                height: 32,
-                fit: BoxFit.cover,
-              )
-                  : Container(
-                width: 32,
-                height: 32,
-                color: Colors.grey[200],
-                child: Icon(Icons.person, size: 20, color: Colors.grey),
-              ),
+              child:
+                  widget.otherUser.profileImage != null
+                      ? AppCachedImage(
+                        imageUrl: widget.otherUser.profileImage!,
+                        width: 32,
+                        height: 32,
+                        fit: BoxFit.cover,
+                      )
+                      : Container(
+                        width: 32,
+                        height: 32,
+                        color: Colors.grey[200],
+                        child: Icon(Icons.person, size: 20, color: Colors.grey),
+                      ),
             )
           else if (!isCurrentUser)
             SizedBox(width: 32), // Placeholder for alignment
@@ -313,7 +301,9 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
           // Message content and timestamp
           Column(
             crossAxisAlignment:
-            isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                isCurrentUser
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
             children: [
               // Name label for first message in sequence
               if (!isCurrentUser && isFirstInSequence)
@@ -338,10 +328,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
                   color: isCurrentUser ? Color(0xFFDCF8C6) : Color(0xFFEFEFEF),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Text(
-                  message.content,
-                  style: TextStyle(fontSize: 15),
-                ),
+                child: Text(message.content, style: TextStyle(fontSize: 15)),
               ),
 
               // Message timestamp
@@ -389,10 +376,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
                 filled: true,
                 fillColor: const Color(0xFFF1F3F4),
                 hintText: '메시지를 입력하세요',
-                hintStyle: TextStyle(
-                  color: Colors.grey[500],
-                  fontSize: 16,
-                ),
+                hintStyle: TextStyle(color: Colors.grey[500], fontSize: 16),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 10,
@@ -413,9 +397,10 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     );
   }
 
-
   // Helper method to group messages by date
-  Map<String, List<ChatMessage>> _groupMessagesByDate(List<ChatMessage> messages) {
+  Map<String, List<ChatMessage>> _groupMessagesByDate(
+    List<ChatMessage> messages,
+  ) {
     final Map<String, List<ChatMessage>> grouped = {};
 
     for (final message in messages) {
