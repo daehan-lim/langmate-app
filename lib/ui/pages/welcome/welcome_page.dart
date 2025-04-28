@@ -111,8 +111,8 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                   imageUrl:
                                       welcomeState.imageUrl ??
                                       user!.profileImage!,
-                                  width: 120,
-                                  height: 120,
+                                  width: 100,
+                                  height: 100,
                                   fit: BoxFit.cover,
                                 ),
                               )
