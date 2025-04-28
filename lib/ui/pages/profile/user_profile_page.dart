@@ -80,7 +80,7 @@ class UserProfilePage extends StatelessWidget {
 
           if (user.languageLearningGoal != null &&
               user.languageLearningGoal!.isNotEmpty)
-            ProfileSectionCard('제게 완벽한 언어 교환 파트너는', user.languageLearningGoal!),
+            ProfileSectionCard('제 언어 학습 목표는', user.languageLearningGoal!),
 
           const SizedBox(height: 30),
         ],

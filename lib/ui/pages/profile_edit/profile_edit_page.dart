@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/data/model/app_user.dart';
@@ -21,28 +22,26 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   late TextEditingController bioController;
   late TextEditingController partnerPreferenceController;
   late TextEditingController languageLearningGoalController;
-  DateTime? birthdate;
+  late TextEditingController birthdateController;
 
   final _formKey = GlobalKey<FormState>();
+  DateTime? birthdate;
 
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController(text: widget.user.name);
-    nativeLanguageController = TextEditingController(
-      text: widget.user.nativeLanguage ?? '',
-    );
-    targetLanguageController = TextEditingController(
-      text: widget.user.targetLanguage ?? '',
-    );
+    nativeLanguageController = TextEditingController(text: widget.user.nativeLanguage ?? '');
+    targetLanguageController = TextEditingController(text: widget.user.targetLanguage ?? '');
     bioController = TextEditingController(text: widget.user.bio ?? '');
-    partnerPreferenceController = TextEditingController(
-      text: widget.user.partnerPreference ?? '',
-    );
-    languageLearningGoalController = TextEditingController(
-      text: widget.user.languageLearningGoal ?? '',
-    );
+    partnerPreferenceController = TextEditingController(text: widget.user.partnerPreference ?? '');
+    languageLearningGoalController = TextEditingController(text: widget.user.languageLearningGoal ?? '');
     birthdate = widget.user.birthdate;
+    birthdateController = TextEditingController(
+      text: birthdate != null
+          ? "${birthdate!.year}년 ${birthdate!.month}월 ${birthdate!.day}일"
+          : '',
+    );
   }
 
   @override
@@ -53,6 +52,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     bioController.dispose();
     partnerPreferenceController.dispose();
     languageLearningGoalController.dispose();
+    birthdateController.dispose();
     super.dispose();
   }
 
@@ -65,9 +65,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       lastDate: now,
     );
     if (picked != null) {
-      setState(() {
-        birthdate = picked;
-      });
+      birthdate = picked;
+      birthdateController.text = "${picked.year}년 ${picked.month}월 ${picked.day}일";
     }
   }
 
@@ -88,7 +87,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       nativeLanguage: nativeLanguageController.text,
       targetLanguage: targetLanguageController.text,
       district: ref.read(editProfileViewModelProvider(widget.user)).district,
-      // updated district
+      location: ref.read(editProfileViewModelProvider(widget.user)).location,
       bio: bioController.text,
       partnerPreference: partnerPreferenceController.text,
       languageLearningGoal: languageLearningGoalController.text,
@@ -127,7 +126,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                 width: 50,
                 height: 50,
                 alignment: Alignment.center,
-                margin: EdgeInsets.only(right: 8),
+                margin: const EdgeInsets.only(right: 8),
                 child: const Text(
                   '저장',
                   style: TextStyle(
@@ -151,82 +150,85 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                 ),
                 const SizedBox(height: 60),
 
-                _buildTextField(
-                  nameController,
-                  '이름',
-                  validator:
-                      (val) => val == null || val.isEmpty ? '이름을 입력하세요' : null,
-                ),
-                _buildTextField(nativeLanguageController, '모국어'),
-                _buildTextField(targetLanguageController, '학습 언어'),
-
-                _buildTextField(bioController, '자기소개', maxLines: 3),
-                _buildTextField(partnerPreferenceController, '교환 파트너 선호'),
-                _buildTextField(languageLearningGoalController, '언어 학습 목표'),
+                _buildLabeledField('이름', nameController),
+                _buildLabeledField('모국어', nativeLanguageController),
+                _buildLabeledField('학습 언어', targetLanguageController),
+                _buildLabeledField('자기소개', bioController, maxLines: 3),
+                _buildLabeledField('완벽한 언어 교환 파트너는 어떤 사람인가요?', partnerPreferenceController),
+                _buildLabeledField('언어 학습 목표는 무엇인가요?', languageLearningGoalController),
+                _buildDateField('생년월일', birthdateController),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  child: GestureDetector(
-                    onTap: _pickBirthdate,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        birthdate != null
-                            ? "${birthdate!.year}년 ${birthdate!.month}월 ${birthdate!.day}일"
-                            : "생년월일 선택",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  child: Row(
+                  padding: const EdgeInsets.only(left: 24, right: 20, top: 14, bottom: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          vm.district ?? '지역을 가져오는 중...',
-                          style: const TextStyle(fontSize: 16),
+                      const Text(
+                        '지역',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
                         ),
                       ),
-                      TextButton(
-                        onPressed:
-                            () =>
-                            ref
-                                .read(
-                              editProfileViewModelProvider(
-                                widget.user,
-                              ).notifier,
-                            )
-                                .refreshDistrict(),
-                        child: Text(
-                          '지역 새로고침',
-                          style: TextStyle(
-                            color: Colors.blueAccent,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          // color: const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 5,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              size: 20,
+                              color: Colors.blueAccent,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                vm.district ?? '지역을 가져오는 중...',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(40, 30),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () => ref
+                                  .read(editProfileViewModelProvider(widget.user).notifier)
+                                  .refreshDistrict(),
+                              child: const Text(
+                                '새로고침',
+                                style: TextStyle(
+                                  color: Colors.blueAccent,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 60),
               ],
             ),
           ),
@@ -235,22 +237,72 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     );
   }
 
-  Padding _buildTextField(
-    TextEditingController controller,
-    String label, {
-    String? Function(String?)? validator,
-    int maxLines = 1,
-  }) {
+  Widget _buildLabeledField(
+      String label,
+      TextEditingController controller, {
+        int maxLines = 1,
+      }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: TextFormField(
-        controller: controller,
-        validator: validator,
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            maxLines: maxLines,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueAccent),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateField(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            readOnly: true,
+            onTap: _pickBirthdate,
+            decoration: InputDecoration(
+              suffixIcon: const Icon(CupertinoIcons.calendar),
+              border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueAccent),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
