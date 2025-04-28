@@ -191,7 +191,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                   hintText: '이름을 입력하세요',
                   validator: (value) {
                     if (value == null || value.isEmpty) return '이름을 입력하세요';
-                    if (value.length <= 3) return '이름은 3자 이상이여야 합니다';
+                    if (value.length < 2) return '이름은 2자 이상이여야 합니다';
                     return null;
                   },
                 ),
