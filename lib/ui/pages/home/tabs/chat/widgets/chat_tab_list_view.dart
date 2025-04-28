@@ -72,7 +72,7 @@ class ChatTabListView extends StatelessWidget {
         ref.read(chatGlobalViewModel.notifier).fetchChatDetail(chatRoom.id);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ChatDetailPage(otherUser, ref.read(chatGlobalViewModel).currentChatRoom)),
+          MaterialPageRoute(builder: (context) => ChatDetailPage(otherUser)),
         );
       },
       child: Container(

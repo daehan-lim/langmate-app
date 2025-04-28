@@ -60,7 +60,6 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
   }
 
   Future<void> openChatWithUser(AppUser currentUser, AppUser otherUser) async {
-    // await Future.delayed(Duration(seconds: 3));
     final chatRepository = ref.read(chatRepositoryProvider);
 
     final chatRoomId = await chatRepository.createOrGetChatRoom(
@@ -81,7 +80,6 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
       );
 
       state = state.copyWith(currentChatRoom: newChatRoom);
-      // await Future.delayed(Duration(seconds: 3));
     }
   }
 
@@ -101,7 +99,6 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
     );
 
     state = state.copyWith(currentChatRoom: chatRoom);
-    // await Future.delayed(Duration(seconds: 3));
 
     final chatRepository = ref.read(chatRepositoryProvider);
 
