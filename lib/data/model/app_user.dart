@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AppUser {
   final String id;
   final String name;
@@ -11,8 +13,7 @@ class AppUser {
   final DateTime? birthdate;
   final String? partnerPreference;
   final String? languageLearningGoal;
-
-  // final GeoPoint? location;
+  final GeoPoint? location;
 
   AppUser({
     required this.id,
@@ -27,6 +28,7 @@ class AppUser {
     this.birthdate,
     this.partnerPreference,
     this.languageLearningGoal,
+    this.location,
   }) : createdAt = createdAt ?? DateTime.now();
 
   int? get age {
@@ -52,6 +54,7 @@ class AppUser {
     DateTime? birthdate,
     String? partnerPreference,
     String? languageLearningGoal,
+    GeoPoint? location,
   }) {
     return AppUser(
       id: id,
@@ -66,6 +69,7 @@ class AppUser {
       birthdate: birthdate ?? this.birthdate,
       partnerPreference: partnerPreference ?? this.partnerPreference,
       languageLearningGoal: languageLearningGoal ?? this.languageLearningGoal,
+      location: location ?? this.location,
     );
   }
 
@@ -87,6 +91,7 @@ class AppUser {
           map['birthdate'] != null ? DateTime.parse(map['birthdate']) : null,
       partnerPreference: map['partnerPreference'],
       languageLearningGoal: map['languageLearningGoal'],
+      location: map['location'],
     );
   }
 
@@ -103,6 +108,7 @@ class AppUser {
       'birthdate': birthdate?.toIso8601String(),
       'partnerPreference': partnerPreference,
       'languageLearningGoal': languageLearningGoal,
+      'location': location,
     };
   }
 }
