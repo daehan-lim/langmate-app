@@ -82,8 +82,6 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
       }
     });
 
-
-
     // Group messages by date for better visualization
     final groupedMessages = _groupMessagesByDate(chatRoom.messages);
 
@@ -241,7 +239,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
   Widget _buildDateSeparator(String date) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 16),
+      margin: EdgeInsets.only(top: 5, bottom: 10),
       child: Row(
         children: [
           Expanded(child: Divider(color: Colors.grey[300])),
@@ -265,7 +263,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   }) {
     return Padding(
       padding: EdgeInsets.only(
-        top: isFirstInSequence ? 16.0 : 4.0,
+        top: isFirstInSequence ? 0 : 4,
         bottom: 4.0,
       ),
       child: Row(
@@ -334,7 +332,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
                 padding: const EdgeInsets.only(top: 4.0, left: 4.0, right: 4.0),
                 child: Text(
                   DateTimeUtil.formatString(message.createdAt),
-                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  style: TextStyle(fontSize: 10, color: Colors.grey[700]),
                 ),
               ),
             ],
