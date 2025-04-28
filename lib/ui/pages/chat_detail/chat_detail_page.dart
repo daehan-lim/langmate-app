@@ -162,14 +162,6 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
           ],
         ),
       ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.info_outline, color: Colors.black),
-          onPressed: () {
-            // Show user profile or chat info
-          },
-        ),
-      ],
     );
   }
 
