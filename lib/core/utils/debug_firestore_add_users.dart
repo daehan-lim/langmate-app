@@ -5,6 +5,57 @@ import 'package:flutter/material.dart';
 
 import '../../data/model/app_user.dart';
 
+void assignBirthdates(BuildContext context) async {
+  final firestore = FirebaseFirestore.instance;
+
+  // Example birthdates from 20 to 36 years old
+  final List<DateTime> birthdates = [
+    DateTime(2004, 5, 12),
+    DateTime(2002, 8, 30),
+    DateTime(1998, 1, 14),
+    DateTime(1990, 11, 20),
+    DateTime(1988, 4, 7),
+    DateTime(2003, 3, 18),
+    DateTime(1999, 9, 2),
+    DateTime(1992, 6, 25),
+    DateTime(1995, 10, 10),
+    DateTime(1987, 7, 5),
+    DateTime(1997, 2, 17),
+    DateTime(1994, 12, 3),
+    DateTime(1991, 5, 9),
+    DateTime(2000, 8, 19),
+    DateTime(2001, 3, 22),
+    DateTime(1989, 1, 27),
+    DateTime(1993, 7, 15),
+  ];
+
+  try {
+    for (int i = 1; i <= 35; i++) {
+      final docId = 'user_$i';
+      final docRef = firestore.collection('users').doc(docId);
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        final DateTime assignedBirthdate = birthdates[i % birthdates.length];
+
+        await docRef.update({
+          'birthdate': assignedBirthdate.toIso8601String(),
+        });
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('✅ Birthdates successfully assigned!')),
+    );
+  } catch (e) {
+    print('Error assigning birthdates: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('❌ Failed to assign birthdates: ${e.toString()}')),
+    );
+  }
+}
+
+
 void assignRandomLocations(BuildContext context) async {
   final firestore = FirebaseFirestore.instance;
 
