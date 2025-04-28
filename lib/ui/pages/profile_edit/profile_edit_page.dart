@@ -72,6 +72,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
+      locale: Locale('ko'),
       initialDate: birthdate ?? now.subtract(const Duration(days: 365 * 20)),
       firstDate: DateTime(1900),
       lastDate: now,
@@ -361,7 +362,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             },
             validator: (value) {
               if (value == '선택') {
-                return '$label을(를) 선택해 주세요';
+                return '$label를 선택해 주세요';
               }
               return null;
             },

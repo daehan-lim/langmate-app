@@ -7,7 +7,7 @@ import 'package:lang_mate/ui/pages/splash/splash_page.dart';
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
 import 'firebase_options.dart';
-import 'ui/pages/auth/login_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +42,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       theme: AppTheme.buildTheme(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('ko'),
+      ],
       home: const SplashPage(),
     );
   }
