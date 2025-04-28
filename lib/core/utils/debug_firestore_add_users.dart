@@ -5,6 +5,45 @@ import 'package:flutter/material.dart';
 
 import '../../data/model/app_user.dart';
 
+void assignRandomLocations(BuildContext context) async {
+  final firestore = FirebaseFirestore.instance;
+
+  // Base location (example: Seoul area)
+  const double baseLatitude = 37.6076782;
+  const double baseLongitude = 126.925248;
+
+  try {
+    for (int i = 1; i <= 35; i++) {
+      final docId = 'user_$i';
+      final docRef = firestore.collection('users').doc(docId);
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        // Generate slight random variations within ~2 km
+        final double randomLatOffset = (i % 10 - 5) * 0.001; // between -0.005 ~ +0.005
+        final double randomLonOffset = (i % 7 - 3) * 0.001;
+
+        final double newLatitude = baseLatitude + randomLatOffset;
+        final double newLongitude = baseLongitude + randomLonOffset;
+
+        await docRef.update({
+          'location': GeoPoint(newLatitude, newLongitude),
+        });
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('✅ Random locations successfully assigned!')),
+    );
+  } catch (e) {
+    print('Error assigning random locations: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('❌ Failed to assign random locations: ${e.toString()}')),
+    );
+  }
+}
+
+
 void assignLanguageLearningGoals(BuildContext context) async {
   final firestore = FirebaseFirestore.instance;
 
@@ -25,7 +64,7 @@ void assignLanguageLearningGoals(BuildContext context) async {
       const SnackBar(content: Text('✅ Language learning goals successfully assigned!')),
     );
   } catch (e) {
-    print('🔥 Error assigning language learning goals: $e');
+    print('Error assigning language learning goals: $e');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('❌ Failed to assign goals: ${e.toString()}')),
     );
@@ -51,7 +90,7 @@ void updateTestDistricts(BuildContext context) async {
       const SnackBar(content: Text('✅ All test districts updated successfully.')),
     );
   } catch (e) {
-    print('🔥 Error updating test districts: $e');
+    print('Error updating test districts: $e');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('❌ Failed to update districts: ${e.toString()}')),
     );
@@ -77,7 +116,7 @@ void removeDebugUsers(BuildContext context) async {
       context,
     ).showSnackBar(const SnackBar(content: Text('🗑 테스트 유저들이 성공적으로 삭제되었습니다.')));
   } catch (e) {
-    print('🔥 Error deleting test users: $e');
+    print('Error deleting test users: $e');
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('❌ 삭제 중 오류가 발생했습니다.')));

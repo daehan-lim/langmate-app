@@ -16,7 +16,7 @@ class MatchedUsersViewModel
   Future<void> fetchNearbyUsers() async {
     state = AsyncLoading();
     try {
-      final currentUser = ref.read(userGlobalViewModelProvider)!;
+      final currentUser = ref.watch(userGlobalViewModelProvider)!;
       List<AppUser> users = await ref
           .read(userRepositoryProvider)
           .getNearbyUsers(currentUser);

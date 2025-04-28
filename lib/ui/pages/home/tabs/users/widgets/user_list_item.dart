@@ -31,6 +31,7 @@ class UserListItem extends StatelessWidget {
             },
           ),
         );
+        // assignRandomLocations(context);
         // updateTestDistricts(context);
         // addDebugUsersFromJson(context);
       },
@@ -70,9 +71,19 @@ class UserListItem extends StatelessWidget {
                       '${user.district ?? ''}  |  ',
                       style: AppStyles.usersListText,
                     ),
-                    Text(
-                      '8.3 km', // replace with actual distance
-                      style: AppStyles.usersListText,
+                    Consumer(
+                      builder: (
+                        BuildContext context,
+                        WidgetRef ref,
+                        Widget? child,
+                      ) {
+                        return Text(
+                          ref
+                              .read(userGlobalViewModelProvider.notifier)
+                              .calculateDistanceFrom(user.location) ?? '1.3 km',
+                          style: AppStyles.usersListText,
+                        );
+                      },
                     ),
                   ],
                 ),

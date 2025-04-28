@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ import '../../user_global_view_model.dart';
 class WelcomeState {
   final String? username;
   final String? location;
+  final GeoPoint? locationCoordinates;
   final bool isLoading;
   final String? errorMessage;
   final String? nativeLanguage; // 나의언어
@@ -22,6 +24,7 @@ class WelcomeState {
   const WelcomeState({
     this.username,
     this.location,
+    this.locationCoordinates,
     this.isLoading = false,
     this.errorMessage,
     this.nativeLanguage,
@@ -33,6 +36,7 @@ class WelcomeState {
     String? username,
     String? location,
     bool? isLoading,
+    GeoPoint? locationCoordinates,
     String? errorMessage,
     String? nativeLanguage,
     String? targetLanguage,
@@ -41,8 +45,10 @@ class WelcomeState {
     return WelcomeState(
       username: username ?? this.username,
       location: location ?? this.location,
+      locationCoordinates: locationCoordinates ?? this.locationCoordinates,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage, // 에러 메시지는 null로 재설정할 수 있도록 ?? 연산자 사용하지 않음
+      errorMessage: errorMessage,
+      // 에러 메시지는 null로 재설정할 수 있도록 ?? 연산자 사용하지 않음
       nativeLanguage: nativeLanguage ?? this.nativeLanguage,
       targetLanguage: targetLanguage ?? this.targetLanguage,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -83,6 +89,10 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
           // 결과 상태 업데이트
           state = state.copyWith(
             location: district ?? '알 수 없는 위치',
+            locationCoordinates: GeoPoint(
+              position.latitude,
+              position.longitude,
+            ),
             isLoading: false,
           );
           break;
@@ -144,7 +154,11 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
     }
   }
 
-  Future<void> saveUserProfile(AppUser user, String username, String? location) async {
+  Future<void> saveUserProfile(
+    AppUser user,
+    String username,
+    String? location,
+  ) async {
     try {
       // Set loading state
       state = state.copyWith(isLoading: true, errorMessage: null);
@@ -155,6 +169,7 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
         nativeLanguage: state.nativeLanguage,
         targetLanguage: state.targetLanguage,
         district: location ?? '서울특별시 강남구 청담동',
+        location: state.locationCoordinates,
         profileImage: state.imageUrl,
       );
 

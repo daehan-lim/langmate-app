@@ -346,14 +346,11 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
                     message.isImage
                         ? ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            message.content,
+                          child: AppCachedImage(
+                            imageUrl: message.content,
                             width: 200,
                             height: 200,
                             fit: BoxFit.cover,
-                            errorBuilder:
-                                (context, error, stackTrace) =>
-                                    Icon(Icons.broken_image),
                           ),
                         )
                         : Text(message.content, style: TextStyle(fontSize: 15)),

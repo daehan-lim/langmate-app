@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/ui/pages/home/tabs/users/widgets/user_list_item.dart';
+import 'package:lang_mate/ui/user_global_view_model.dart';
 
 import '../../../../../app/app_providers.dart';
 import '../../../../../core/utils/ui_util.dart';
@@ -18,6 +19,8 @@ class MatchedUsersTab extends StatelessWidget {
       builder: (context, ref, child) {
         final authService = ref.read(authServiceProvider);
         final users = ref.watch(matchedUsersViewModelProvider);
+        final appUser = ref.watch(userGlobalViewModelProvider);
+        print(appUser?.name);
         return Column(
           children: [
             AppBar(
