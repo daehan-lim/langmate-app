@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +10,7 @@ import '../../../data/model/chat_message.dart';
 import '../../chat_global_view_model.dart';
 import '../../user_global_view_model.dart';
 import '../../widgets/app_cached_image.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatDetailPage extends ConsumerStatefulWidget {
   final AppUser otherUser;
@@ -21,6 +24,7 @@ class ChatDetailPage extends ConsumerStatefulWidget {
 class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -56,6 +60,16 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
+    }
+  }
+
+  void _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      await ref.read(chatGlobalViewModel.notifier).sendImageMessage(file);
     }
   }
 
@@ -262,10 +276,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     required bool isFirstInSequence,
   }) {
     return Padding(
-      padding: EdgeInsets.only(
-        top: isFirstInSequence ? 0 : 4,
-        bottom: 4.0,
-      ),
+      padding: EdgeInsets.only(top: isFirstInSequence ? 0 : 4, bottom: 4.0),
       child: Row(
         mainAxisAlignment:
             isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -324,7 +335,21 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
                   color: isCurrentUser ? Color(0xFFDCF8C6) : Color(0xFFEFEFEF),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Text(message.content, style: TextStyle(fontSize: 15)),
+                child:
+                    message.isImage
+                        ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            message.content,
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (context, error, stackTrace) =>
+                                    Icon(Icons.broken_image),
+                          ),
+                        )
+                        : Text(message.content, style: TextStyle(fontSize: 15)),
               ),
 
               // Message timestamp
@@ -359,10 +384,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
         children: [
           IconButton(
             icon: Icon(Icons.image, color: Colors.grey[700]),
-            onPressed: () {
-              // Image selection functionality
-              print("이미지 선택 눌림");
-            },
+            onPressed: _pickImage, //이미지 추가
           ),
           Expanded(
             child: TextField(

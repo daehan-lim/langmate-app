@@ -12,6 +12,7 @@ abstract class ChatRepository {
     required String chatRoomId,
     required String senderId,
     required String content,
+    bool isImage,
   });
 
   Stream<List<ChatMessage>> getChatMessages(String chatRoomId);
@@ -57,6 +58,7 @@ class ChatRepositoryFirebase implements ChatRepository {
     required String chatRoomId,
     required String senderId,
     required String content,
+    bool isImage = false,
   }) async {
     final messageId =
         _firestore
@@ -71,6 +73,7 @@ class ChatRepositoryFirebase implements ChatRepository {
       senderId: senderId,
       content: content,
       createdAt: DateTime.now(),
+      isImage: isImage,
     );
 
     await _firestore
