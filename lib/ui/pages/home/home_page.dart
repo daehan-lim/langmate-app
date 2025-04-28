@@ -6,6 +6,7 @@ import 'package:lang_mate/ui/pages/home/widgets/home_bottom_navigation_bar.dart'
 import 'package:lang_mate/ui/pages/profile/user_profile_page.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 
+import '../profile_edit/profile_edit_page.dart';
 import 'home_view_model.dart';
 
 class HomePage extends StatelessWidget {
@@ -23,7 +24,7 @@ class HomePage extends StatelessWidget {
             children: [
               MatchedUsersTab(),
               ChatTab(),
-              UserProfilePage(user: ref.read(userGlobalViewModelProvider)!),
+              ProfileEditPage(user: ref.read(userGlobalViewModelProvider)!),
             ],
           );
         },
