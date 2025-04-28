@@ -100,10 +100,9 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                       }
                     },
                     child: Center(
-                      child:
-                          // welcomeState.imageUrl이 null이 아니면 welcomeStateUrl 이미지 뿌려주기
-                          //null 일 경우 user에 profile이미지 그대로 뿌려주기
-                          // 유저에 프로파일 이미지가 널 이면 아이콘 펄슨 뿌려주기
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
                           welcomeState.imageUrl != null ||
                                   user?.profileImage != null
                               ? ClipOval(
@@ -117,14 +116,29 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                 ),
                               )
                               : Container(
-                                width: 120,
-                                height: 120,
+                                width: 100,
+                                height: 100,
                                 decoration: BoxDecoration(
                                   color: Colors.grey[200],
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(Icons.person, size: 50),
                               ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 14,
+                              backgroundColor: Colors.grey.shade200,
+                              child: const Icon(
+                                Icons.camera_alt_outlined,
+                                size: 16,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),
