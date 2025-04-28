@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_styles.dart';
+import 'package:lang_mate/core/utils/ui_util.dart';
+import 'package:lang_mate/ui/pages/profile/user_profile_page.dart';
 import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
 import '../../../../../../app/constants/app_colors.dart';
@@ -21,6 +23,14 @@ class UserListItem extends StatelessWidget {
     return InkWell(
       highlightColor: AppColors.lightGrey,
       onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return UserProfilePage(user: user);
+            },
+          ),
+        );
         // updateTestDistricts(context);
         // addDebugUsersFromJson(context);
       },
@@ -132,22 +142,11 @@ class UserListItem extends StatelessWidget {
             return ListTextButton(
               '채팅',
               onPressed: () {
-                final currentUser = ref.read(userGlobalViewModelProvider);
-                if (currentUser != null) {
-                  // First clear the current chat
-                  // ref.read(chatGlobalViewModel.notifier).clearCurrentChat();
-
-                  ref
-                      .read(chatGlobalViewModel.notifier)
-                      .openChatWithUser(currentUser, user);
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatDetailPage(user),
-                    ),
-                  );
-                }
+                UIUtil.openConversationWithUser(
+                  otherUser: user,
+                  ref: ref,
+                  context: context,
+                );
               },
             );
           },
