@@ -27,6 +27,7 @@ dependencies:
   image_picker: ^1.1.2
   firebase_storage: ^12.4.5
   intl: ^0.20.2
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -43,8 +44,18 @@ flutter:
   uses-material-design: true
 
 flutter_launcher_icons:
-  adaptive_icon_foreground: "assets/icons/app_logo_transparent.png"
-  adaptive_icon_background: "#52C1FF"
-  image_path: "assets/icons/app_logo2.png"
+  adaptive_icon_foreground: "assets/icons/app_logo4_white.png"
+  adaptive_icon_background: "#FFFFFF"
+  image_path: "assets/icons/app_logo4_white.png"
   android: true
   ios: true
+
+flutter_native_splash:
+  color: "#ffffff" # background color
+  image: assets/icons/app_logo4_rounded.png # logo
+  android: true
+  ios: true
+
+  android_12:
+    image: assets/icons/app_logo4_rounded.png # also for Android 12+
+    color: "#ffffff" # background for Android 12

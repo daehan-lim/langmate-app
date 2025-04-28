@@ -28,10 +28,10 @@ class LoginPage extends ConsumerWidget {
             children: [
               // 앱 로고나 이미지
               Image.asset(
-                'assets/icons/app_logo_rounded_border.png',
+                'assets/icons/app_logo4_rounded.png',
                 height: 120,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               // 앱 이름 또는 환영 텍스트
               const Text(

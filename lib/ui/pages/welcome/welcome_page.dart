@@ -228,7 +228,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: const Text(
-                                '배우고 싶은 언어',
+                                '학습언어',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
