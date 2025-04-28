@@ -74,6 +74,7 @@ class UserRepositoryFirebase implements UserRepository {
       'bio': user.bio,
       'age': user.age,
       'partnerPreference': user.partnerPreference,
+      'languageLearningGoal': user.languageLearningGoal,
     });
   }
 }
