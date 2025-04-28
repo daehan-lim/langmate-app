@@ -10,21 +10,24 @@ class ChatMessage {
   String senderId;
   String content;
   DateTime createdAt;
+  final bool isImage;
 
   ChatMessage({
     required this.id,
     required this.senderId,
     required this.content,
     required this.createdAt,
+    this.isImage = false,
   });
 
   ChatMessage.fromMap(Map<String, dynamic> map)
-      : this(
-          id: map['id'],
-          senderId: map['senderId'],
-          content: map['content'],
-          createdAt: DateTime.parse(map['createdAt']),
-        );
+    : this(
+        id: map['id'],
+        senderId: map['senderId'],
+        content: map['content'],
+        createdAt: DateTime.parse(map['createdAt']),
+        isImage: map['isImage'] ?? false,
+      );
 
   Map<String, dynamic> toMap() {
     return {
@@ -32,6 +35,7 @@ class ChatMessage {
       'senderId': senderId,
       'content': content,
       'createdAt': createdAt.toIso8601String(),
+      'isImage': isImage,
     };
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 
@@ -89,13 +91,14 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
 
     // Find the chat room in existing list
     final chatRoom = state.chatRooms.firstWhere(
-          (room) => room.id == chatRoomId,
-      orElse: () => ChatRoom(
-        id: chatRoomId,
-        participants: [],
-        messages: [],
-        createdAt: DateTime.now(),
-      ),
+      (room) => room.id == chatRoomId,
+      orElse:
+          () => ChatRoom(
+            id: chatRoomId,
+            participants: [],
+            messages: [],
+            createdAt: DateTime.now(),
+          ),
     );
 
     state = state.copyWith(currentChatRoom: chatRoom);
@@ -106,15 +109,15 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
     _chatMessagesSubscription = chatRepository
         .getChatMessages(chatRoomId)
         .listen((messages) {
-      final updatedChatRoom = ChatRoom(
-        id: chatRoom.id,
-        participants: chatRoom.participants,
-        messages: messages,
-        createdAt: chatRoom.createdAt,
-      );
+          final updatedChatRoom = ChatRoom(
+            id: chatRoom.id,
+            participants: chatRoom.participants,
+            messages: messages,
+            createdAt: chatRoom.createdAt,
+          );
 
-      state = state.copyWith(currentChatRoom: updatedChatRoom);
-    });
+          state = state.copyWith(currentChatRoom: updatedChatRoom);
+        });
   }
 
   Future<void> sendMessage(String content) async {
@@ -134,6 +137,28 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
     } catch (e) {
       print("Error sending message: $e");
     }
+  }
+
+  Future<void> sendImageMessage(File file) async {
+    //이미지 추가
+    if (state.currentChatRoom == null) return;
+    final user = ref.read(userGlobalViewModelProvider);
+    if (user == null) return;
+
+    final storageRef = FirebaseStorage.instance.ref().child(
+      'chat_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+    );
+
+    await storageRef.putFile(file);
+    final imageUrl = await storageRef.getDownloadURL();
+
+    final chatRepository = ref.read(chatRepositoryProvider);
+    await chatRepository.sendMessage(
+      chatRoomId: state.currentChatRoom!.id,
+      senderId: user.id,
+      content: imageUrl,
+      isImage: true,
+    );
   }
 }
 
