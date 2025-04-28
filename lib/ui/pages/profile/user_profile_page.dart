@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/data/model/app_user.dart';
 import 'package:lang_mate/ui/pages/profile/widgets/chat_button.dart';
 import 'package:lang_mate/ui/pages/profile/widgets/profile_section_card.dart';
+import 'package:lang_mate/ui/widgets/profile_images.dart';
 
 import '../../widgets/app_cached_image.dart';
 
@@ -16,7 +17,7 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text('사용자 프로필'),),
+      appBar: AppBar(title: Text('사용자 프로필')),
       body: _buildProfileLayout(context),
       bottomNavigationBar: ChatButton(user: user),
     );
@@ -27,7 +28,11 @@ class UserProfilePage extends StatelessWidget {
       child: Column(
         children: [
           // Cover and Profile Image
-          _buildProfileImages(context),
+          ProfileImages(
+            profileImageUrl:
+                user.profileImage ?? 'https://picsum.photos/200/200?random=1',
+            isEditable: false,
+          ),
           const SizedBox(height: 60),
           // Name + Age
           Text(
@@ -80,47 +85,6 @@ class UserProfilePage extends StatelessWidget {
           const SizedBox(height: 30),
         ],
       ),
-    );
-  }
-
-  Stack _buildProfileImages(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          height: 170,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/world_background.jpg'),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: -50,
-          left: MediaQuery.of(context).size.width / 2 - 50,
-          child: ClipOval(
-            child: Container(
-              width: 100,
-              // 2 * radius 50
-              height: 100,
-              color: Colors.white,
-              alignment: Alignment.center,
-              child: ClipOval(
-                child: AppCachedImage(
-                  imageUrl:
-                      user.profileImage ??
-                      'https://picsum.photos/200/200?random=1',
-                  width: 92, // 2 * radius 46
-                  height: 92,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
