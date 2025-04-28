@@ -5,7 +5,8 @@ import '../../../../../core/exceptions/data_exceptions.dart';
 import '../../../../../data/model/app_user.dart';
 import '../../../../user_global_view_model.dart';
 
-class MatchedUsersViewModel extends AutoDisposeNotifier<AsyncValue<List<AppUser>>> {
+class MatchedUsersViewModel
+    extends AutoDisposeNotifier<AsyncValue<List<AppUser>>> {
   @override
   AsyncValue<List<AppUser>> build() {
     fetchNearbyUsers();
@@ -36,7 +37,7 @@ class MatchedUsersViewModel extends AutoDisposeNotifier<AsyncValue<List<AppUser>
   }
 }
 
-final matchedUsersViewModelProvider =
-    AutoDisposeNotifierProvider<MatchedUsersViewModel, AsyncValue<List<AppUser>>>(
-      MatchedUsersViewModel.new,
-    );
+final matchedUsersViewModelProvider = AutoDisposeNotifierProvider<
+  MatchedUsersViewModel,
+  AsyncValue<List<AppUser>>
+>(MatchedUsersViewModel.new);
