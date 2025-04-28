@@ -10,6 +10,8 @@ abstract class UserRepository {
   Future<AppUser?> getUserById(String uid);
 
   Future<void> createUserIfNotExists(AppUser user);
+
+  Future<void> saveUserProfile(AppUser user);
 }
 
 class UserRepositoryFirebase implements UserRepository {
@@ -58,6 +60,20 @@ class UserRepositoryFirebase implements UserRepository {
       'profileImage': user.profileImage,
       'email': user.email,
       'createdAt': user.createdAt.toIso8601String(),
+    });
+  }
+
+  @override
+  Future<void> saveUserProfile(AppUser user) async {
+    await _firestore.collection('users').doc(user.id).set({
+      'name': user.name,
+      'nativeLanguage': user.nativeLanguage,
+      'targetLanguage': user.targetLanguage,
+      'district': user.district,
+      'profileImage': user.profileImage,
+      'bio': user.bio,
+      'age': user.age,
+      'partnerPreference': user.partnerPreference,
     });
   }
 }
