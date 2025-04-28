@@ -16,7 +16,7 @@ class MyProfileTab extends StatelessWidget {
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? child) {
         final user = ref.watch(userGlobalViewModelProvider)!;
-        return Column(
+        return ListView(
           children: [
             AppBar(
               title: Text('나의 프로필'),
@@ -38,30 +38,6 @@ class MyProfileTab extends StatelessWidget {
                   context,
                   ref.read(authServiceProvider),
                 ),
-                // GestureDetector(
-                //   onTap: () {
-                //     Navigator.of(context).push(
-                //       MaterialPageRoute(
-                //         builder: (context) {
-                //           return ProfileEditPage(user: user);
-                //         },
-                //       ),
-                //     );
-                //   },
-                //   child: Container(
-                //     width: 50,
-                //     height: 50,
-                //     alignment: Alignment.center,
-                //     margin: const EdgeInsets.only(right: 8),
-                //     child: const Text(
-                //       '수정',
-                //       style: TextStyle(
-                //         color: Colors.blue,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
             ProfileLayout(user: user),
