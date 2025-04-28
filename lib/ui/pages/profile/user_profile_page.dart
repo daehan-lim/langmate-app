@@ -16,7 +16,7 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('사용자 프로필'),),
       body: _buildProfileLayout(context),
       bottomNavigationBar: ChatButton(user: user),
     );
