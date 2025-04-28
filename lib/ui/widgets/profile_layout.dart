@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/ui/widgets/profile_images.dart';
 import 'package:lang_mate/ui/widgets/profile_section_card.dart';
 
 import '../../data/model/app_user.dart';
+import '../user_global_view_model.dart';
 
 class ProfileLayout extends StatelessWidget {
   final AppUser user;
@@ -17,7 +19,7 @@ class ProfileLayout extends StatelessWidget {
           // Cover and Profile Image
           ProfileImages(
             profileImageUrl:
-            user.profileImage ?? 'https://picsum.photos/200/200?random=1',
+                user.profileImage ?? 'https://picsum.photos/200/200?random=1',
             isEditable: false,
           ),
           const SizedBox(height: 60),
@@ -50,9 +52,15 @@ class ProfileLayout extends StatelessWidget {
 
           // Location Card
           if (user.district != null)
-            _infoTile(
-              icon: Icons.location_on_outlined,
-              title: '${user.district}  |  8.3 km',
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                return _infoTile(
+                  icon: Icons.location_on_outlined,
+                  title:
+                      '${user.district}  |  ${ref.read(userGlobalViewModelProvider.notifier).
+                      calculateDistanceFrom(user.location) ?? '1.3 km'}',
+                );
+              },
             ),
 
           Divider(height: 40, color: Colors.grey[300]),
@@ -88,5 +96,4 @@ class ProfileLayout extends StatelessWidget {
       ),
     );
   }
-
 }
