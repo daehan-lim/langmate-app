@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_colors.dart';
 import 'package:lang_mate/core/utils/date_time_util.dart';
+import 'package:lang_mate/data/model/chat_room.dart';
 import '../../../../../data/model/app_user.dart';
 import '../../../data/model/chat_message.dart';
 import '../../chat_global_view_model.dart';
@@ -11,8 +12,9 @@ import '../../widgets/app_cached_image.dart';
 
 class ChatDetailPage extends ConsumerStatefulWidget {
   final AppUser otherUser;
+  final ChatRoom? previousChatRoom;
 
-  const ChatDetailPage(this.otherUser, {super.key});
+  const ChatDetailPage(this.otherUser, this.previousChatRoom, {super.key});
 
   @override
   ConsumerState<ChatDetailPage> createState() => _ChatDetailPageState();
