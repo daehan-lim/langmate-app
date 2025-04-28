@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import '../../../../../core/utils/geolocator_util.dart';
 import '../../../../../app/app_providers.dart';
+import '../../../data/model/app_user.dart';
+import '../../user_global_view_model.dart';
 
 // 환영 페이지의 상태를 관리하는 클래스
 class WelcomeState {
@@ -139,6 +141,38 @@ class WelcomeViewModel extends Notifier<WelcomeState> {
       state = state.copyWith(imageUrl: imageUrl);
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> saveUserProfile(AppUser user, String username, String? location) async {
+    try {
+      // Set loading state
+      state = state.copyWith(isLoading: true, errorMessage: null);
+
+      // Create updated user object
+      final updatedUser = user.copyWith(
+        name: username,
+        nativeLanguage: state.nativeLanguage,
+        targetLanguage: state.targetLanguage,
+        district: location ?? '서울특별시 강남구 청담동',
+        profileImage: state.imageUrl,
+      );
+
+      // Get user repository and save profile
+      final userRepository = ref.read(userRepositoryProvider);
+      await userRepository.saveUserProfile(updatedUser);
+
+      // Update global user state
+      ref.read(userGlobalViewModelProvider.notifier).setUser(updatedUser);
+
+      // Reset loading state
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: '정보 저장 중 오류가 발생했습니다: ${e.toString()}',
+      );
+      rethrow;
     }
   }
 }

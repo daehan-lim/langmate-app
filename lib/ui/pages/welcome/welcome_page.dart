@@ -353,41 +353,14 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                     // return;  Uncomment later
                                   }
 
-                                  final updatedUser = user.copyWith(
-                                    name: _usernameController.text,
-                                    nativeLanguage: welcomeState.nativeLanguage,
-                                    targetLanguage: welcomeState.targetLanguage,
-                                    district: welcomeState.location ?? '서울특별시 강남구 청담동',
-                                  );
-
                                   try {
-                                    // Save to Firestore
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(updatedUser.id)
-                                        .set({
-                                          'name': updatedUser.name,
-                                          'nativeLanguage':
-                                              updatedUser.nativeLanguage,
-                                          'targetLanguage':
-                                              updatedUser.targetLanguage,
-                                          'district': updatedUser.district,
-                                          'profileImage':
-                                              updatedUser.profileImage,
-                                          'bio': updatedUser.bio,
-                                          'age': updatedUser.age,
-                                          'partnerPreference':
-                                              updatedUser.partnerPreference,
-                                        });
-
-                                    // ✅ Update global state
-                                    ref
-                                        .read(
-                                          userGlobalViewModelProvider.notifier,
-                                        )
-                                        .setUser(updatedUser);
-
-                                    print("✅ 사용자 정보 저장 완료. 홈으로 이동");
+                                    await ref
+                                        .read(welcomeViewModelProvider.notifier)
+                                        .saveUserProfile(
+                                          user,
+                                          _usernameController.text,
+                                          welcomeState.location,
+                                        );
 
                                     Navigator.pushReplacement(
                                       context,
@@ -396,11 +369,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
                                       ),
                                     );
                                   } catch (e) {
-                                    print("Firestore 저장 중 오류 발생: $e");
-                                    SnackbarUtil.showSnackBar(
-                                      context,
-                                      '정보 저장 중 오류가 발생했습니다.',
-                                    );
+                                    print("프로필 저장 중 오류 발생: $e");
                                   }
                                 }
                               },
