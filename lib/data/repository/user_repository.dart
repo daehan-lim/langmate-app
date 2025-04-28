@@ -10,6 +10,8 @@ abstract class UserRepository {
   Future<AppUser?> getUserById(String uid);
 
   Future<void> createUserIfNotExists(AppUser user);
+
+  Future<void> saveUserProfile(AppUser user);
 }
 
 class UserRepositoryFirebase implements UserRepository {
@@ -59,6 +61,12 @@ class UserRepositoryFirebase implements UserRepository {
       'email': user.email,
       'createdAt': user.createdAt.toIso8601String(),
     });
+  }
+
+  @override
+  Future<void> saveUserProfile(AppUser user) {
+    // TODO: implement saveUserProfile
+    throw UnimplementedError();
   }
 }
 
