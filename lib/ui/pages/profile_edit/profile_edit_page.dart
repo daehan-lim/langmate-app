@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/data/model/app_user.dart';
 import 'package:lang_mate/ui/widgets/profile_images.dart';
 import 'package:lang_mate/core/utils/dialogue_util.dart';
+import '../../../app/constants/app_constants.dart';
 import 'edit_profile_view_model.dart';
 
 class ProfileEditPage extends ConsumerStatefulWidget {
@@ -27,20 +28,31 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   final _formKey = GlobalKey<FormState>();
   DateTime? birthdate;
 
+  final List<String> _languages = ['선택', ...AppConstants.languages];
+
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController(text: widget.user.name);
-    nativeLanguageController = TextEditingController(text: widget.user.nativeLanguage ?? '');
-    targetLanguageController = TextEditingController(text: widget.user.targetLanguage ?? '');
+    nativeLanguageController = TextEditingController(
+      text: widget.user.nativeLanguage ?? '',
+    );
+    targetLanguageController = TextEditingController(
+      text: widget.user.targetLanguage ?? '',
+    );
     bioController = TextEditingController(text: widget.user.bio ?? '');
-    partnerPreferenceController = TextEditingController(text: widget.user.partnerPreference ?? '');
-    languageLearningGoalController = TextEditingController(text: widget.user.languageLearningGoal ?? '');
+    partnerPreferenceController = TextEditingController(
+      text: widget.user.partnerPreference ?? '',
+    );
+    languageLearningGoalController = TextEditingController(
+      text: widget.user.languageLearningGoal ?? '',
+    );
     birthdate = widget.user.birthdate;
     birthdateController = TextEditingController(
-      text: birthdate != null
-          ? "${birthdate!.year}년 ${birthdate!.month}월 ${birthdate!.day}일"
-          : '',
+      text:
+          birthdate != null
+              ? "${birthdate!.year}년 ${birthdate!.month}월 ${birthdate!.day}일"
+              : '',
     );
   }
 
@@ -66,7 +78,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     );
     if (picked != null) {
       birthdate = picked;
-      birthdateController.text = "${picked.year}년 ${picked.month}월 ${picked.day}일";
+      birthdateController.text =
+          "${picked.year}년 ${picked.month}월 ${picked.day}일";
     }
   }
 
@@ -150,16 +163,43 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                 ),
                 const SizedBox(height: 60),
 
-                _buildLabeledField('이름', nameController),
-                _buildLabeledField('모국어', nativeLanguageController),
-                _buildLabeledField('학습 언어', targetLanguageController),
-                _buildLabeledField('자기소개', bioController, maxLines: 3),
-                _buildLabeledField('완벽한 언어 교환 파트너는 어떤 사람인가요?', partnerPreferenceController),
-                _buildLabeledField('언어 학습 목표는 무엇인가요?', languageLearningGoalController),
+                _buildLabeledField(
+                  '이름',
+                  nameController,
+                  hintText: '이름을 입력하세요',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return '이름을 입력하세요';
+                    if (value.length <= 3) return '이름은 3자 이상이여야 합니다';
+                    return null;
+                  },
+                ),
+
+                _buildLanguageDropdown('모국어', nativeLanguageController),
+                _buildLanguageDropdown('학습 언어', targetLanguageController),
+
+                _buildLabeledField(
+                  '자기 소개',
+                  bioController,
+                  hintText: '자신을 간단히 소개하세요',
+                ),
+                _buildLabeledField(
+                  '완벽한 언어 교환 파트너는 어떤 사람인가요?',
+                  partnerPreferenceController,
+                ),
+                _buildLabeledField(
+                  '언어 학습 목표는 무엇인가요?',
+                  languageLearningGoalController,
+                ),
+
                 _buildDateField('생년월일', birthdateController),
 
                 Padding(
-                  padding: const EdgeInsets.only(left: 24, right: 20, top: 14, bottom: 8),
+                  padding: const EdgeInsets.only(
+                    left: 24,
+                    right: 20,
+                    top: 14,
+                    bottom: 8,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -173,25 +213,27 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       ),
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          // color: const Color(0xFFF8FAFC),
                           borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 5,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 5,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Row(
                           children: [
                             const Icon(
                               Icons.location_on_outlined,
                               size: 20,
-                              color: Colors.blueAccent,
+                              // color: Colors.blueAccent,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -210,9 +252,15 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                 minimumSize: const Size(40, 30),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: () => ref
-                                  .read(editProfileViewModelProvider(widget.user).notifier)
-                                  .refreshDistrict(),
+                              onPressed:
+                                  () =>
+                                      ref
+                                          .read(
+                                            editProfileViewModelProvider(
+                                              widget.user,
+                                            ).notifier,
+                                          )
+                                          .refreshDistrict(),
                               child: const Text(
                                 '새로고침',
                                 style: TextStyle(
@@ -238,10 +286,12 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   }
 
   Widget _buildLabeledField(
-      String label,
-      TextEditingController controller, {
-        int maxLines = 1,
-      }) {
+    String label,
+    TextEditingController controller, {
+    int maxLines = 1,
+    String? hintText,
+    String? Function(String?)? validator,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Column(
@@ -260,11 +310,71 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             controller: controller,
             maxLines: maxLines,
             decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(color: Colors.grey[700]),
               border: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black),
               ),
               focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blueAccent),
+              ),
+            ),
+            validator: validator,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageDropdown(
+    String label,
+    TextEditingController controller,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value:
+                _languages.contains(controller.text) ? controller.text : '선택',
+            items:
+                _languages.map((language) {
+                  return DropdownMenuItem(
+                    value: language,
+                    child: Text(language),
+                  );
+                }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.text = value;
+              }
+            },
+            validator: (value) {
+              if (value == '선택') {
+                return '$label을(를) 선택해 주세요';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueAccent),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
               ),
             ),
           ),
@@ -293,6 +403,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             readOnly: true,
             onTap: _pickBirthdate,
             decoration: InputDecoration(
+              hintText: '생년월일을 선택하세요',
               suffixIcon: const Icon(CupertinoIcons.calendar),
               border: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black),
