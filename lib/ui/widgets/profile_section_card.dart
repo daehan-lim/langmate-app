@@ -21,15 +21,15 @@ class ProfileSectionCard extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F7F7),
               borderRadius: BorderRadius.circular(12),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black.withValues(alpha: 0.1),
-              //     blurRadius: 2,
-              //     offset: const Offset(0, 2),
-              //   ),
-              // ],
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Text(
