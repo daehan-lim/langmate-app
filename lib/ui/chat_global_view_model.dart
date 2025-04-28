@@ -55,38 +55,8 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
     });
   }
 
-  Future<void> fetchChatDetail(String chatRoomId) async {
-    // Cancel previous messages subscription if exists
-    _chatMessagesSubscription?.cancel();
-
-    // Find the chat room in existing list
-    final chatRoom = state.chatRooms.firstWhere(
-      (room) => room.id == chatRoomId,
-      orElse: () => ChatRoom(
-        id: chatRoomId,
-        participants: [],
-        messages: [],
-        createdAt: DateTime.now(),
-      ),
-    );
-
-    state = state.copyWith(currentChatRoom: chatRoom);
-
-    final chatRepository = ref.read(chatRepositoryProvider);
-
-    // Listen to messages for this chat room
-    _chatMessagesSubscription = chatRepository
-        .getChatMessages(chatRoomId)
-        .listen((messages) {
-          final updatedChatRoom = ChatRoom(
-            id: chatRoom.id,
-            participants: chatRoom.participants,
-            messages: messages,
-            createdAt: chatRoom.createdAt,
-          );
-
-          state = state.copyWith(currentChatRoom: updatedChatRoom);
-        });
+  void clearCurrentChat() {
+    state = state.copyWith(currentChatRoom: null);
   }
 
   Future<void> openChatWithUser(AppUser currentUser, AppUser otherUser) async {
@@ -111,6 +81,40 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
 
       state = state.copyWith(currentChatRoom: newChatRoom);
     }
+  }
+
+  Future<void> fetchChatDetail(String chatRoomId) async {
+    // Cancel previous messages subscription if exists
+    _chatMessagesSubscription?.cancel();
+
+    // Find the chat room in existing list
+    final chatRoom = state.chatRooms.firstWhere(
+          (room) => room.id == chatRoomId,
+      orElse: () => ChatRoom(
+        id: chatRoomId,
+        participants: [],
+        messages: [],
+        createdAt: DateTime.now(),
+      ),
+    );
+
+    state = state.copyWith(currentChatRoom: chatRoom);
+
+    final chatRepository = ref.read(chatRepositoryProvider);
+
+    // Listen to messages for this chat room
+    _chatMessagesSubscription = chatRepository
+        .getChatMessages(chatRoomId)
+        .listen((messages) {
+      final updatedChatRoom = ChatRoom(
+        id: chatRoom.id,
+        participants: chatRoom.participants,
+        messages: messages,
+        createdAt: chatRoom.createdAt,
+      );
+
+      state = state.copyWith(currentChatRoom: updatedChatRoom);
+    });
   }
 
   Future<void> sendMessage(String content) async {

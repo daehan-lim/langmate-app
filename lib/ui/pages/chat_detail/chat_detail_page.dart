@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/app/constants/app_colors.dart';
 import 'package:lang_mate/core/utils/date_time_util.dart';
 import '../../../../../data/model/app_user.dart';
 import '../../../data/model/chat_message.dart';
@@ -60,47 +61,28 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final appUser = ref.watch(userGlobalViewModelProvider);
+    final appUser = ref.watch(userGlobalViewModelProvider)!;
     final chatState = ref.watch(chatGlobalViewModel);
     final chatRoom = chatState.currentChatRoom;
     print(chatRoom?.id);
 
+    if (chatRoom == null) {
+      print('chat room null');
+      return _buildConvoLoadingLayout();
+    }
+
     // Listen for changes to scroll to bottom on new messages
     ref.listen(chatGlobalViewModel, (previous, current) {
+      print('enter listen page');
       if (previous?.currentChatRoom?.messages.length !=
-              current.currentChatRoom?.messages.length) {
+          current.currentChatRoom?.messages.length) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottom();
         });
       }
-
-      // if (_isFirstLoad && current.currentChatRoom != null) {
-      //   _isFirstLoad = false;
-      // }
     });
 
-    if (appUser == null) {
-      return const Scaffold(body: Center(child: Text('사용자 정보를 찾을 수 없습니다')));
-    }
 
-    if (chatRoom == null) {
-      return const Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Material(
-            elevation: 1,
-            color: Color(0xFFF8F9FA),
-            child: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Center(child: CupertinoActivityIndicator(radius: 12)),
-              ),
-            ),
-          ),
-        ),
-        body: Center(child: CupertinoActivityIndicator(radius: 20)),
-      );
-    }
 
     // Group messages by date for better visualization
     final groupedMessages = _groupMessagesByDate(chatRoom.messages);
@@ -125,10 +107,28 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     );
   }
 
+  Scaffold _buildConvoLoadingLayout() {
+    return const Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Material(
+          elevation: 1,
+          color: AppColors.appBarGrey,
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Center(child: CupertinoActivityIndicator(radius: 12)),
+            ),
+          ),
+        ),
+      ),
+      body: Center(child: CupertinoActivityIndicator(radius: 20)),
+    );
+  }
+
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: Color(0xFFF8F9FA),
-      elevation: 1,
+      backgroundColor: AppColors.appBarGrey,
       title: Column(
         children: [
           Text(

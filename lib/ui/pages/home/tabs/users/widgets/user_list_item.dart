@@ -134,7 +134,9 @@ class UserListItem extends StatelessWidget {
               onPressed: () {
                 final currentUser = ref.read(userGlobalViewModelProvider);
                 if (currentUser != null) {
-                  // Initialize chat with this user and navigate
+                  // First clear the current chat
+                  // ref.read(chatGlobalViewModel.notifier).clearCurrentChat();
+
                   ref
                       .read(chatGlobalViewModel.notifier)
                       .openChatWithUser(currentUser, user);
