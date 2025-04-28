@@ -76,6 +76,27 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       initialDate: birthdate ?? now.subtract(const Duration(days: 365 * 20)),
       firstDate: DateTime(1900),
       lastDate: now,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.blueAccent, // Example crimson color
+              onPrimary: Colors.white,    // Text color on primary (e.g. header text)
+              surface: Colors.white,      // Dialog background color
+              onSurface: Colors.black87,  // Default text color
+            ),
+            datePickerTheme: const DatePickerThemeData(
+              backgroundColor: Colors.white,
+              headerBackgroundColor: Colors.blueAccent, // crimson
+              headerForegroundColor: Colors.white,
+              dayForegroundColor: WidgetStatePropertyAll(Colors.black87),
+              todayForegroundColor: WidgetStatePropertyAll(Colors.white),
+              todayBackgroundColor: WidgetStatePropertyAll(Colors.blueAccent),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       birthdate = picked;
