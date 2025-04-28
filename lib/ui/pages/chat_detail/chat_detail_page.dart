@@ -82,8 +82,6 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
       }
     });
 
-
-
     // Group messages by date for better visualization
     final groupedMessages = _groupMessagesByDate(chatRoom.messages);
 
@@ -241,7 +239,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
   Widget _buildDateSeparator(String date) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 16),
+      margin: EdgeInsets.only(top: 5, bottom: 10),
       child: Row(
         children: [
           Expanded(child: Divider(color: Colors.grey[300])),
@@ -265,7 +263,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   }) {
     return Padding(
       padding: EdgeInsets.only(
-        top: isFirstInSequence ? 16.0 : 4.0,
+        top: isFirstInSequence ? 0 : 4,
         bottom: 4.0,
       ),
       child: Row(
@@ -333,8 +331,8 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 4.0, left: 4.0, right: 4.0),
                 child: Text(
-                  DateTimeUtil.formatString(message.createdAt),
-                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  DateTimeUtil.formatTimeForMessage(message.createdAt),
+                  style: TextStyle(fontSize: 10, color: Colors.grey[700]),
                 ),
               ),
             ],
@@ -402,7 +400,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     final Map<String, List<ChatMessage>> grouped = {};
 
     for (final message in messages) {
-      final date = _formatDateForGroup(message.createdAt);
+      final date = DateTimeUtil.formatDateForMessageGroup(message.createdAt);
       if (!grouped.containsKey(date)) {
         grouped[date] = [];
       }
@@ -410,21 +408,5 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     }
 
     return grouped;
-  }
-
-  // Helper to format the date for grouping
-  String _formatDateForGroup(DateTime dateTime) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(Duration(days: 1));
-    final messageDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
-
-    if (messageDate == today) {
-      return '오늘';
-    } else if (messageDate == yesterday) {
-      return '어제';
-    } else {
-      return '${dateTime.year}년 ${dateTime.month}월 ${dateTime.day}일';
-    }
   }
 }

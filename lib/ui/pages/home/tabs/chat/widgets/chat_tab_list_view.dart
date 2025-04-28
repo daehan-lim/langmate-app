@@ -62,7 +62,7 @@ class ChatTabListView extends StatelessWidget {
     final hasMessages = chatRoom.messages.isNotEmpty;
     final displayDateTime =
         hasMessages
-            ? DateTimeUtil.formatString(chatRoom.messages.last.createdAt)
+            ? DateTimeUtil.formatForChatList(chatRoom.messages.last.createdAt)
             : '';
     final message = hasMessages ? chatRoom.messages.last.content : '';
 
@@ -76,7 +76,7 @@ class ChatTabListView extends StatelessWidget {
         );
       },
       child: Container(
-        height: 80,
+        // height: 80,
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
@@ -99,19 +99,22 @@ class ChatTabListView extends StatelessWidget {
                       ),
                       Text(
                         displayDateTime,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: Colors.black87,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 4),
-                  Text(
-                    message,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 60),
+                    child: Text(
+                      message,
+                      maxLines: 2,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
                   ),
                 ],
               ),

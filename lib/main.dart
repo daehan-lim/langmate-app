@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:lang_mate/ui/pages/splash/splash_page.dart';
 import 'app/constants/app_constants.dart';
 import 'app/theme.dart';
@@ -27,6 +28,7 @@ void main() async {
     // .env 파일이 없거나 실패해도 앱 실행에는 영향 없음
   }
 
+  await initializeDateFormatting('ko', null);
   runApp(const ProviderScope(child: MyApp()));
 }
 
