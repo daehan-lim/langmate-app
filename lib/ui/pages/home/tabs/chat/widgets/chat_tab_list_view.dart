@@ -62,7 +62,7 @@ class ChatTabListView extends StatelessWidget {
     final hasMessages = chatRoom.messages.isNotEmpty;
     final displayDateTime =
         hasMessages
-            ? DateTimeUtil.formatString(chatRoom.messages.last.createdAt)
+            ? DateTimeUtil.formatForChatList(chatRoom.messages.last.createdAt)
             : '';
     final message = hasMessages ? chatRoom.messages.last.content : '';
 
