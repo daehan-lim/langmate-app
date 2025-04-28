@@ -8,9 +8,10 @@ class AppUser {
   final String? nativeLanguage;
   final String? targetLanguage;
   final String? bio;
-  final int? age;
+  final DateTime? birthdate;
   final String? partnerPreference;
   final String? languageLearningGoal;
+
   // final GeoPoint? location;
 
   AppUser({
@@ -23,10 +24,21 @@ class AppUser {
     this.nativeLanguage,
     this.targetLanguage,
     this.bio,
-    this.age,
+    this.birthdate,
     this.partnerPreference,
-    this.languageLearningGoal
+    this.languageLearningGoal,
   }) : createdAt = createdAt ?? DateTime.now();
+
+  int? get age {
+    if (birthdate == null) return null;
+    final today = DateTime.now();
+    int calculatedAge = today.year - birthdate!.year;
+    if (today.month < birthdate!.month ||
+        (today.month == birthdate!.month && today.day < birthdate!.day)) {
+      calculatedAge--;
+    }
+    return calculatedAge;
+  }
 
   AppUser copyWith({
     String? name,
@@ -37,7 +49,7 @@ class AppUser {
     String? nativeLanguage,
     String? targetLanguage,
     String? bio,
-    int? age,
+    DateTime? birthdate,
     String? partnerPreference,
     String? languageLearningGoal,
   }) {
@@ -51,7 +63,7 @@ class AppUser {
       nativeLanguage: nativeLanguage ?? this.nativeLanguage,
       targetLanguage: targetLanguage ?? this.targetLanguage,
       bio: bio ?? this.bio,
-      age: age ?? this.age,
+      birthdate: birthdate ?? this.birthdate,
       partnerPreference: partnerPreference ?? this.partnerPreference,
       languageLearningGoal: languageLearningGoal ?? this.languageLearningGoal,
     );
@@ -71,7 +83,8 @@ class AppUser {
       nativeLanguage: map['nativeLanguage'],
       targetLanguage: map['targetLanguage'],
       bio: map['bio'],
-      age: map['age'],
+      birthdate:
+          map['birthdate'] != null ? DateTime.parse(map['birthdate']) : null,
       partnerPreference: map['partnerPreference'],
       languageLearningGoal: map['languageLearningGoal'],
     );
@@ -87,7 +100,7 @@ class AppUser {
       'nativeLanguage': nativeLanguage,
       'targetLanguage': targetLanguage,
       'bio': bio,
-      'age': age,
+      'birthdate': birthdate?.toIso8601String(),
       'partnerPreference': partnerPreference,
       'languageLearningGoal': languageLearningGoal,
     };
