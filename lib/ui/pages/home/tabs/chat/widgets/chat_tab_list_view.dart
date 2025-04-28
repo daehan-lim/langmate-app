@@ -38,7 +38,7 @@ class ChatTabListView extends StatelessWidget {
               return _buildChatRoomItem(context, ref, chatRoom, appUser);
             },
             separatorBuilder: (context, index) {
-              return Divider(height: 1);
+              return Divider(indent: 5, height: 20, color: Colors.grey[300]);
             },
           ),
         );
@@ -79,6 +79,7 @@ class ChatTabListView extends StatelessWidget {
         // height: 80,
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildUserAvatar(otherUser),
             SizedBox(width: 16),
