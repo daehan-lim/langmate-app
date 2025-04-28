@@ -64,9 +64,17 @@ class UserRepositoryFirebase implements UserRepository {
   }
 
   @override
-  Future<void> saveUserProfile(AppUser user) {
-    // TODO: implement saveUserProfile
-    throw UnimplementedError();
+  Future<void> saveUserProfile(AppUser user) async {
+    await _firestore.collection('users').doc(user.id).set({
+      'name': user.name,
+      'nativeLanguage': user.nativeLanguage,
+      'targetLanguage': user.targetLanguage,
+      'district': user.district,
+      'profileImage': user.profileImage,
+      'bio': user.bio,
+      'age': user.age,
+      'partnerPreference': user.partnerPreference,
+    });
   }
 }
 
