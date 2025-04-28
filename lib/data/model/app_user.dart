@@ -10,6 +10,7 @@ class AppUser {
   final String? bio;
   final int? age;
   final String? partnerPreference;
+  final String? languageLearningGoal;
   // final GeoPoint? location;
 
   AppUser({
@@ -24,6 +25,7 @@ class AppUser {
     this.bio,
     this.age,
     this.partnerPreference,
+    this.languageLearningGoal
   }) : createdAt = createdAt ?? DateTime.now();
 
   AppUser copyWith({
@@ -37,6 +39,7 @@ class AppUser {
     String? bio,
     int? age,
     String? partnerPreference,
+    String? languageLearningGoal,
   }) {
     return AppUser(
       id: id,
@@ -50,6 +53,7 @@ class AppUser {
       bio: bio ?? this.bio,
       age: age ?? this.age,
       partnerPreference: partnerPreference ?? this.partnerPreference,
+      languageLearningGoal: languageLearningGoal ?? this.languageLearningGoal,
     );
   }
 
@@ -69,6 +73,7 @@ class AppUser {
       bio: map['bio'],
       age: map['age'],
       partnerPreference: map['partnerPreference'],
+      languageLearningGoal: map['languageLearningGoal'],
     );
   }
 
@@ -84,6 +89,7 @@ class AppUser {
       'bio': bio,
       'age': age,
       'partnerPreference': partnerPreference,
+      'languageLearningGoal': languageLearningGoal,
     };
   }
 }

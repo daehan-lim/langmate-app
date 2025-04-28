@@ -40,6 +40,7 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/images/world_background.jpg
     - assets/icons/
     - assets/animations/
 

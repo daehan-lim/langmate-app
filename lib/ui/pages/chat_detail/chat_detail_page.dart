@@ -8,6 +8,7 @@ import '../../../data/model/chat_message.dart';
 import '../../chat_global_view_model.dart';
 import '../../user_global_view_model.dart';
 import '../../widgets/app_cached_image.dart';
+import '../profile/user_profile_page.dart';
 
 class ChatDetailPage extends ConsumerStatefulWidget {
   final AppUser otherUser;
@@ -127,34 +128,40 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: AppColors.appBarGrey,
-      title: Column(
-        children: [
-          Text(
-            widget.otherUser.name,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+      title: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return UserProfilePage(user: widget.otherUser);
+              },
             ),
-          ),
-          Text(
-            '${widget.otherUser.district ?? ''} · ${widget.otherUser.nativeLanguage ?? ''} → ${widget.otherUser.targetLanguage ?? ''}',
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+          );
+          // updateTestDistricts(context);
+          // addDebugUsersFromJson(context);
+        },
+        child: Column(
+          children: [
+            Text(
+              widget.otherUser.name,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.info_outline, color: Colors.black),
-          onPressed: () {
-            // Show user profile or chat info
-          },
+            Text(
+              '${widget.otherUser.district ?? ''} · ${widget.otherUser.nativeLanguage ?? ''} → ${widget.otherUser.targetLanguage ?? ''}',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
