@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/data/model/app_user.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../../../../core/utils/date_time_util.dart';
 import '../../../../../../data/model/chat_room.dart';
@@ -150,17 +151,26 @@ class ChatTabListView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.chat_bubble_outline, size: 48, color: Colors.grey),
+            Lottie.asset(
+              'assets/animations/no_chats.json',
+              width: 240,
+              fit: BoxFit.cover,
+            ),
             SizedBox(height: 16),
             Text(
               '대화 내역이 없습니다',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: 21,
+                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 16),
             Text(
-              '주변 사용자를 찾아 대화를 시작해보세요',
-              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+              '언어 파트너를 찾아 대화를 시작해보세요',
+              style: TextStyle(fontSize: 16, color: Colors.black87),
             ),
+            SizedBox(height: 150),
           ],
         ),
       ),
