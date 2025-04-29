@@ -7,7 +7,7 @@ import 'package:lang_mate/ui/widgets/profile_layout.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 
 import '../profile_edit/profile_edit_page.dart';
-import 'home_view_model.dart';
+import 'home_veiw_model.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
