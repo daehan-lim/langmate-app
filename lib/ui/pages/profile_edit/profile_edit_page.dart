@@ -316,7 +316,37 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             initialDate: _birthdate ?? DateTime(2000),
             firstDate: DateTime(1900),
             lastDate: DateTime.now(),
+            builder: (context, child) {
+              return Theme(
+                data: ThemeData.light().copyWith(
+                  useMaterial3: false,
+                  colorScheme: const ColorScheme.light(
+                    primary: Colors.blue,
+                    onPrimary: Colors.white,
+                    onSurface: Colors.black87,
+                  ),
+                  dialogTheme: const DialogTheme(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                  textButtonTheme: TextButtonThemeData(
+                    style: TextButton.styleFrom(foregroundColor: Colors.blue),
+                  ),
+                  textTheme: ThemeData.light().textTheme.copyWith(
+                    bodyLarge: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                child: child!,
+              );
+            },
           );
+
           if (picked != null) {
             setState(() {
               _birthdate = picked;
