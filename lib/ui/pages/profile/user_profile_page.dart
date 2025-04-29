@@ -3,14 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_constants.dart';
 import 'package:lang_mate/core/utils/snackbar_util.dart';
 import 'package:lang_mate/data/model/app_user.dart';
-import '../../pages/profile/widgets/chat_button.dart';
+import 'package:lang_mate/ui/pages/profile/widgets/chat_button.dart';
 import 'package:lang_mate/ui/widgets/profile_section_card.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 import 'package:lang_mate/app/app_providers.dart';
-import 'profile_view_model.dart';
-
-import '../../widgets/app_cached_image.dart';
-import 'profile_view_model.dart';
+import 'package:lang_mate/ui/widgets/app_cached_image.dart';
+import 'package:lang_mate/ui/pages/profile_edit/profile_edit_page.dart';
+import 'package:lang_mate/ui/pages/profile/profile_view_model.dart';
 
 class UserProfilePage extends ConsumerWidget {
   final AppUser user;
@@ -37,7 +36,21 @@ class UserProfilePage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          if (isCurrentUser)
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProfileEditPage(user: user),
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
       body: _buildProfileLayout(context, ref, currentUser, profileViewModel),
       bottomNavigationBar: isCurrentUser ? null : ChatButton(user: user),
     );
