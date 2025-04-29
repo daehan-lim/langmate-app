@@ -160,6 +160,31 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
       isImage: true,
     );
   }
+
+  /// 현재 채팅방 나가기(삭제) 기능
+  ///
+  /// 현재 열린 채팅방을 나가고 채팅 목록으로 이동
+  Future<bool> leaveChatRoom() async {
+    if (state.currentChatRoom == null) return false;
+
+    final user = ref.read(userGlobalViewModelProvider);
+    if (user == null) return false;
+
+    try {
+      final chatRepository = ref.read(chatRepositoryProvider);
+
+      // 채팅방 나가기 요청
+      await chatRepository.leaveChatRoom(state.currentChatRoom!.id, user.id);
+
+      // 현재 채팅방 정보 초기화
+      clearCurrentChat();
+
+      return true;
+    } catch (e) {
+      print("Error leaving chat room: $e");
+      return false;
+    }
+  }
 }
 
 final chatGlobalViewModel =

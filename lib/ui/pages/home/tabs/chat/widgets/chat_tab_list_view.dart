@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lang_mate/app/app_providers.dart';
+import 'package:lang_mate/core/utils/dialogue_util.dart';
+import 'package:lang_mate/core/utils/snackbar_util.dart';
 import 'package:lang_mate/data/model/app_user.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 import 'package:lottie/lottie.dart';
@@ -66,61 +69,81 @@ class ChatTabListView extends StatelessWidget {
             : '';
     final message = hasMessages ? chatRoom.messages.last.content : '';
 
-    return InkWell(
-      onTap: () {
-        // Load chat detail and navigate
-        ref.read(chatGlobalViewModel.notifier).fetchChatDetail(chatRoom.id);
-        Navigator.push(
+    // 스와이프로 삭제 가능한 위젯으로 감싸기
+    return Dismissible(
+      key: Key(chatRoom.id),
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.only(right: 20),
+        child: Icon(Icons.delete, color: Colors.white),
+      ),
+      direction: DismissDirection.endToStart, // 오른쪽에서 왼쪽으로만 스와이프 가능
+      confirmDismiss: (direction) async {
+        // 삭제 확인 다이얼로그 표시
+        return await _showDeleteConfirmDialog(
           context,
-          MaterialPageRoute(builder: (context) => ChatDetailPage(otherUser)),
+          ref,
+          chatRoom.id,
+          appUser.id,
         );
       },
-      child: Container(
-        // height: 80,
-        padding: EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildUserAvatar(otherUser),
-            SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        otherUser.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: () {
+          // Load chat detail and navigate
+          ref.read(chatGlobalViewModel.notifier).fetchChatDetail(chatRoom.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatDetailPage(otherUser)),
+          );
+        },
+        child: Container(
+          // height: 80,
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildUserAvatar(otherUser),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          otherUser.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        displayDateTime,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
+                        Text(
+                          displayDateTime,
+                          style: TextStyle(fontSize: 12, color: Colors.black87),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 60),
-                    child: Text(
-                      message,
-                      maxLines: 2,
-                      overflow: TextOverflow.clip,
-                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      ],
                     ),
-                  ),
-                ],
+                    SizedBox(height: 4),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 60),
+                      child: Text(
+                        chatRoom.messages.isNotEmpty &&
+                                chatRoom.messages.last.isImage
+                            ? '📷 이미지'
+                            : message,
+                        maxLines: 2,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -179,5 +202,38 @@ class ChatTabListView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // 채팅방 삭제 확인 다이얼로그
+  Future<bool> _showDeleteConfirmDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String chatRoomId,
+    String userId,
+  ) async {
+    // static 메서드는 클래스를 통해 직접 접근
+    final result = await DialogueUtil.showAppCupertinoDialog(
+      context: context,
+      title: '채팅방 나가기',
+      content: '정말로 이 채팅방을 나가시겠습니까?\n채팅 내용이 모두 삭제되며, 이 작업은 되돌릴 수 없습니다.',
+      showCancel: true,
+    );
+
+    if (result == '확인') {
+      try {
+        // 채팅방 나가기 요청
+        final chatRepository = ref.read(chatRepositoryProvider);
+        await chatRepository.leaveChatRoom(chatRoomId, userId);
+
+        SnackbarUtil.showSnackBar(context, '채팅방에서 나갔습니다.');
+        return true;
+      } catch (e) {
+        print("채팅방 나가기 오류: $e");
+        SnackbarUtil.showSnackBar(context, '채팅방 나가기에 실패했습니다.');
+        return false;
+      }
+    }
+
+    return false;
   }
 }
