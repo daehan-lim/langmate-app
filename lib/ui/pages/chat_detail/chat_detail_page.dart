@@ -3,15 +3,19 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/app/constants/app_colors.dart';
 import 'package:lang_mate/core/utils/date_time_util.dart';
+import 'package:lang_mate/core/utils/dialogue_util.dart';
+import 'package:lang_mate/core/utils/snackbar_util.dart';
+
 import '../../../../../data/model/app_user.dart';
 import '../../../data/model/chat_message.dart';
 import '../../chat_global_view_model.dart';
 import '../../user_global_view_model.dart';
 import '../../widgets/app_cached_image.dart';
+import '../home/home_page.dart';
 import '../profile/user_profile_page.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ChatDetailPage extends ConsumerStatefulWidget {
   final AppUser otherUser;
@@ -23,17 +27,9 @@ class ChatDetailPage extends ConsumerStatefulWidget {
 }
 
 class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
-  final TextEditingController _messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  final ImagePicker _picker = ImagePicker();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
-  }
+  final _messageController = TextEditingController();
+  final _scrollController = ScrollController();
+  String? _lastMessageDate;
 
   @override
   void dispose() {
@@ -42,236 +38,200 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  void _sendMessage(String text) {
-    if (text.trim().isNotEmpty) {
-      ref.read(chatGlobalViewModel.notifier).sendMessage(text);
-      _messageController.clear();
-
-      // Schedule scroll to bottom after the message is added
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
-      });
-    }
-  }
-
-  void _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      final file = File(pickedFile.path);
-      await ref.read(chatGlobalViewModel.notifier).sendImageMessage(file);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final appUser = ref.watch(userGlobalViewModelProvider)!;
     final chatState = ref.watch(chatGlobalViewModel);
-    final chatRoom = chatState.currentChatRoom;
-    print(chatRoom?.id);
+    final currentUser = ref.watch(userGlobalViewModelProvider);
+    final currentChat = chatState.currentChatRoom;
 
-    if (chatRoom == null) {
-      print('chat room null');
-      return _buildConvoLoadingLayout();
+    if (currentUser == null || currentChat == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // Listen for changes to scroll to bottom on new messages
-    ref.listen(chatGlobalViewModel, (previous, current) {
-      print('enter listen page');
-      if (previous?.currentChatRoom?.messages.length !=
-          current.currentChatRoom?.messages.length) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollToBottom();
-        });
-      }
-    });
-
-    // Group messages by date for better visualization
-    final groupedMessages = _groupMessagesByDate(chatRoom.messages);
-
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: SafeArea(
-        child: Column(
+      appBar: AppBar(
+        title: Row(
           children: [
-            // Messages area
-            Expanded(
-              child:
-                  chatRoom.messages.isEmpty
-                      ? _buildEmptyChatView()
-                      : _buildMessagesList(groupedMessages, appUser),
-            ),
-            // Message input area
-            _buildMessageInput(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Scaffold _buildConvoLoadingLayout() {
-    return const Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: Material(
-          elevation: 1,
-          color: AppColors.appBarGrey,
-          child: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Center(child: CupertinoActivityIndicator(radius: 12)),
-            ),
-          ),
-        ),
-      ),
-      body: Center(child: CupertinoActivityIndicator(radius: 20)),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.appBarGrey,
-      title: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return UserProfilePage(user: widget.otherUser);
-              },
-            ),
-          );
-          // updateTestDistricts(context);
-          // addDebugUsersFromJson(context);
-        },
-        child: Column(
-          children: [
-            Text(
-              widget.otherUser.name,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            CircleAvatar(
+              radius: 15,
+              child: ClipOval(
+                child:
+                    widget.otherUser.profileImage != null
+                        ? AppCachedImage(
+                          imageUrl: widget.otherUser.profileImage!,
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        )
+                        : const Icon(Icons.person, size: 18),
               ),
             ),
-            Text(
-              '${widget.otherUser.district ?? ''} · ${widget.otherUser.nativeLanguage ?? ''} → ${widget.otherUser.targetLanguage ?? ''}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const SizedBox(width: 8),
+            Text(widget.otherUser.name, style: const TextStyle(fontSize: 16)),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyChatView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ClipOval(
-            child:
-                widget.otherUser.profileImage != null
-                    ? AppCachedImage(
-                      imageUrl: widget.otherUser.profileImage!,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    )
-                    : Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey[200],
-                      child: Icon(Icons.person, size: 40, color: Colors.grey),
-                    ),
-          ),
-          SizedBox(height: 16),
-          Text(
-            widget.otherUser.name,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '${widget.otherUser.nativeLanguage ?? ''} → ${widget.otherUser.targetLanguage ?? ''}',
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-          ),
-          SizedBox(height: 24),
-          Text(
-            '대화를 시작해보세요!',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == 'leave') {
+                _showLeaveConfirmDialog(context);
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'leave',
+                  child: Row(
+                    children: [
+                      Icon(Icons.exit_to_app, color: Colors.red, size: 20),
+                      SizedBox(width: 8),
+                      Text('채팅방 나가기', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildMessagesList(
-    Map<String, List<ChatMessage>> groupedMessages,
-    AppUser currentUser,
-  ) {
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16.0),
-      itemCount: groupedMessages.length,
-      itemBuilder: (context, index) {
-        final date = groupedMessages.keys.elementAt(index);
-        final messages = groupedMessages[date]!;
-
-        return Column(
-          children: [
-            // Date separator
-            _buildDateSeparator(date),
-
-            // Messages for this date
-            ...messages.asMap().entries.map((entry) {
-              final i = entry.key;
-              final message = entry.value;
-
-              // Determine if this is the first message from this sender in a sequence
-              final isFirstInSequence =
-                  i == 0 || messages[i - 1].senderId != message.senderId;
-
-              return _buildMessageBubble(
-                message: message,
-                isCurrentUser: message.senderId == currentUser.id,
-                isFirstInSequence: isFirstInSequence,
-              );
-            }).toList(),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildDateSeparator(String date) {
-    return Container(
-      margin: EdgeInsets.only(top: 5, bottom: 10),
-      child: Row(
+      body: Column(
         children: [
-          Expanded(child: Divider(color: Colors.grey[300])),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              date,
-              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+          // 메시지 목록
+          Expanded(
+            child:
+                currentChat.messages.isEmpty
+                    ? Center(
+                      child: Text(
+                        '메시지가 없습니다.\n대화를 시작해보세요!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    )
+                    : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: currentChat.messages.length,
+                      itemBuilder: (context, index) {
+                        final message = currentChat.messages[index];
+                        final isMe = message.senderId == currentUser.id;
+
+                        // 날짜 구분선 표시 로직
+                        bool showDateSeparator = false;
+                        if (index == 0) {
+                          showDateSeparator = true;
+                          _lastMessageDate =
+                              DateTimeUtil.formatDateForMessageGroup(
+                                message.createdAt,
+                              );
+                        } else {
+                          final currentDate =
+                              DateTimeUtil.formatDateForMessageGroup(
+                                message.createdAt,
+                              );
+                          final previousDate =
+                              DateTimeUtil.formatDateForMessageGroup(
+                                currentChat.messages[index - 1].createdAt,
+                              );
+
+                          if (currentDate != previousDate) {
+                            showDateSeparator = true;
+                            _lastMessageDate = currentDate;
+                          }
+                        }
+
+                        return Column(
+                          children: [
+                            if (showDateSeparator)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8.0,
+                                  bottom: 16.0,
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      _lastMessageDate!,
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            _buildMessageBubble(
+                              message: message,
+                              isMe: isMe,
+                              context: context,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+          ),
+
+          // 메시지 입력 영역
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  offset: const Offset(0, -1),
+                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.06),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: Row(
+                children: [
+                  // 이미지 첨부 버튼
+                  IconButton(
+                    icon: const Icon(Icons.photo),
+                    onPressed: () => _sendImage(),
+                    color: Colors.blue,
+                  ),
+                  // 메시지 입력창
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintText: '메시지를 입력하세요',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                      onSubmitted: (_) => _sendMessage(),
+                      textInputAction: TextInputAction.send,
+                    ),
+                  ),
+                  // 전송 버튼
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _sendMessage,
+                    color: Colors.blue,
+                  ),
+                ],
+              ),
             ),
           ),
-          Expanded(child: Divider(color: Colors.grey[300])),
         ],
       ),
     );
@@ -279,160 +239,147 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
   Widget _buildMessageBubble({
     required ChatMessage message,
-    required bool isCurrentUser,
-    required bool isFirstInSequence,
+    required bool isMe,
+    required BuildContext context,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(top: isFirstInSequence ? 0 : 4, bottom: 4.0),
-      child: Row(
-        mainAxisAlignment:
-            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Avatar for other user's first message in a sequence
-          if (!isCurrentUser && isFirstInSequence)
-            ClipOval(
-              child:
-                  widget.otherUser.profileImage != null
-                      ? AppCachedImage(
-                        imageUrl: widget.otherUser.profileImage!,
-                        width: 32,
-                        height: 32,
-                        fit: BoxFit.cover,
-                      )
-                      : Container(
-                        width: 32,
-                        height: 32,
-                        color: Colors.grey[200],
-                        child: Icon(Icons.person, size: 20, color: Colors.grey),
-                      ),
-            )
-          else if (!isCurrentUser)
-            SizedBox(width: 32), // Placeholder for alignment
+    final timeText = DateTimeUtil.formatTimeForMessage(message.createdAt);
+    final bubbleColor = isMe ? Colors.blue[100] : Colors.grey[200];
+    final textColor = isMe ? Colors.black87 : Colors.black87;
+    final alignment = isMe ? MainAxisAlignment.end : MainAxisAlignment.start;
 
-          SizedBox(width: 8),
+    Widget messageContent;
 
-          // Message content and timestamp
-          Column(
-            crossAxisAlignment:
-                isCurrentUser
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-            children: [
-              // Name label for first message in sequence
-              if (!isCurrentUser && isFirstInSequence)
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0, bottom: 4.0),
-                  child: Text(
-                    widget.otherUser.name,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                  ),
-                ),
-
-              // Message bubble
-              Container(
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.65,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: isCurrentUser ? Color(0xFFDCF8C6) : Color(0xFFEFEFEF),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child:
-                    message.isImage
-                        ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: AppCachedImage(
-                            imageUrl: message.content,
-                            width: 200,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                        : Text(message.content, style: TextStyle(fontSize: 15)),
-              ),
-
-              // Message timestamp
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0, left: 4.0, right: 4.0),
-                child: Text(
-                  DateTimeUtil.formatTimeForMessage(message.createdAt),
-                  style: TextStyle(fontSize: 10, color: Colors.grey[700]),
-                ),
-              ),
-            ],
+    if (message.isImage) {
+      // 이미지 메시지
+      messageContent = ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          onTap: () {
+            // 이미지 전체 화면으로 보기
+          },
+          child: AppCachedImage(
+            imageUrl: message.content,
+            width: 200,
+            height: 200,
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessageInput() {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 3,
-            offset: Offset(0, -1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.image, color: Colors.grey[700]),
-            onPressed: _pickImage, //이미지 추가
-          ),
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              onSubmitted: _sendMessage,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: const Color(0xFFF1F3F4),
-                hintText: '메시지를 입력하세요',
-                hintStyle: TextStyle(color: Colors.grey[500], fontSize: 16),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.send, color: Colors.blue),
-            onPressed: () => _sendMessage(_messageController.text),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Helper method to group messages by date
-  Map<String, List<ChatMessage>> _groupMessagesByDate(
-    List<ChatMessage> messages,
-  ) {
-    final Map<String, List<ChatMessage>> grouped = {};
-
-    for (final message in messages) {
-      final date = DateTimeUtil.formatDateForMessageGroup(message.createdAt);
-      if (!grouped.containsKey(date)) {
-        grouped[date] = [];
-      }
-      grouped[date]!.add(message);
+        ),
+      );
+    } else {
+      // 텍스트 메시지
+      messageContent = Text(
+        message.content,
+        style: TextStyle(color: textColor, fontSize: 16),
+      );
     }
 
-    return grouped;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: alignment,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isMe) ...[
+            CircleAvatar(
+              radius: 16,
+              child: ClipOval(
+                child:
+                    widget.otherUser.profileImage != null
+                        ? AppCachedImage(
+                          imageUrl: widget.otherUser.profileImage!,
+                          width: 32,
+                          height: 32,
+                          fit: BoxFit.cover,
+                        )
+                        : const Icon(Icons.person, size: 20),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          if (isMe)
+            Text(
+              timeText,
+              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+            ),
+          const SizedBox(width: 4),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            padding:
+                message.isImage
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: bubbleColor,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: messageContent,
+          ),
+          const SizedBox(width: 4),
+          if (!isMe)
+            Text(
+              timeText,
+              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _sendMessage() {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    ref.read(chatGlobalViewModel.notifier).sendMessage(text);
+    _messageController.clear();
+
+    // 메시지 전송 후 스크롤을 아래로 이동
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _sendImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File file = File(pickedFile.path);
+      await ref.read(chatGlobalViewModel.notifier).sendImageMessage(file);
+    }
+  }
+
+  void _showLeaveConfirmDialog(BuildContext context) async {
+    // static 메서드는 클래스를 통해 직접 접근
+    final result = await DialogueUtil.showAppCupertinoDialog(
+      context: context,
+      title: '채팅방 나가기',
+      content: '정말로 이 채팅방을 나가시겠습니까?\n채팅 내용이 모두 삭제되며, 이 작업은 되돌릴 수 없습니다.',
+      showCancel: true,
+    );
+
+    if (result == '확인') {
+      final success =
+          await ref.read(chatGlobalViewModel.notifier).leaveChatRoom();
+
+      if (success) {
+        SnackbarUtil.showSnackBar(context, '채팅방에서 나갔습니다.');
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => HomePage()),
+            (route) => false,
+          );
+        }
+      } else {
+        SnackbarUtil.showSnackBar(context, '채팅방 나가기에 실패했습니다.');
+      }
+    }
   }
 }
