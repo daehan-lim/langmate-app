@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'app_cached_image.dart';
+import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
 class ProfileImages extends StatelessWidget {
   final String? profileImageUrl;
@@ -19,50 +18,69 @@ class ProfileImages extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
+        // Banner/Cover image
         Container(
           height: 170,
           width: double.infinity,
-          decoration: BoxDecoration(
-            image: const DecorationImage(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
               image: AssetImage('assets/images/world_background.jpg'),
               fit: BoxFit.cover,
             ),
           ),
         ),
+
+        // Profile image
         Positioned(
           bottom: -50,
           left: MediaQuery.of(context).size.width / 2 - 50,
           child: GestureDetector(
             onTap: isEditable ? onImageTap : null,
-            child: Stack(
-              children: [
-                ClipOval(
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.white,
-                    alignment: Alignment.center,
-                    child: ClipOval(
-                      child: AppCachedImage(
-                        imageUrl: profileImageUrl ?? 'https://picsum.photos/200/200?random=1',
-                        width: 92,
-                        height: 92,
-                        fit: BoxFit.cover,
+            child: ClipOval(
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.white,
+                alignment: Alignment.center,
+                child: Stack(
+                  children: [
+                    ClipOval(
+                      child:
+                          profileImageUrl != null
+                              ? AppCachedImage(
+                                imageUrl: profileImageUrl!,
+                                width: 92,
+                                height: 92,
+                                fit: BoxFit.cover,
+                              )
+                              : Container(
+                                width: 92,
+                                height: 92,
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.person, size: 50),
+                              ),
+                    ),
+                    if (isEditable)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                  ],
                 ),
-                if (isEditable)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: Colors.grey.shade200,
-                      child: const Icon(Icons.camera_alt_outlined, size: 16, color: Colors.black54),
-                    ),
-                  ),
-              ],
+              ),
             ),
           ),
         ),
