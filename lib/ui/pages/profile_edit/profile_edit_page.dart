@@ -158,7 +158,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             .read(editProfileViewModelProvider(widget.user).notifier)
             .updateProfileImage(pickedFile);
 
-        SnackbarUtil.showSnackBar(context, '이미지가 성공적으로 업로드되었습니다.');
+        // SnackbarUtil.showSnackBar(context, '이미지가 성공적으로 업로드되었습니다.');
       } catch (e) {
         SnackbarUtil.showSnackBar(
           context,
@@ -218,8 +218,12 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                   profileImageUrl: state.profileImageUrl,
                   isEditable: true,
                   onImageTap: _pickImage,
+                  isLoading: state.isUploadingImage,
                 ),
-                const SizedBox(height: 60),
+                InkWell(
+                  onTap: !state.isUploadingImage ? _pickImage : null,
+                  child: const SizedBox(height: 60, width: 100),
+                ),
 
                 _buildLabeledField(
                   '이름',
