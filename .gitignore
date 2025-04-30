@@ -137,24 +137,3 @@ app.*.map.json
 *.log
 *.tmp
 *.lock
-
-# ----------------------------------------
-# Browser and VS Code cache files 
-# 스크린샷에서 보이는 캐시 파일들을 위한 추가 설정
-**/.cache/
-**/cache/
-C:/Users/*/cache/
-*_js
-*_py
-*.js.map
-
-# Node.js
-node_modules/
-npm-debug.log
-yarn-error.log
-yarn-debug.log
-
-# Chrome/Browser Extension related
-*.crx
-*.pem
-*.zip

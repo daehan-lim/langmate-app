@@ -32,6 +32,7 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepositoryFirebase();
 });
 
+
 /// 환영 화면 관련 프로바이더
 final welcomeViewModelProvider =
     NotifierProvider<WelcomeViewModel, WelcomeState>(WelcomeViewModel.new);

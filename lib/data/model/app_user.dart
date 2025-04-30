@@ -55,7 +55,6 @@ class AppUser {
     String? partnerPreference,
     String? languageLearningGoal,
     GeoPoint? location,
-    int? age,
   }) {
     return AppUser(
       id: id,

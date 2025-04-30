@@ -78,7 +78,8 @@ class ChatTabListView extends StatelessWidget {
         padding: EdgeInsets.only(right: 20),
         child: Icon(Icons.delete, color: Colors.white),
       ),
-      direction: DismissDirection.endToStart, // 오른쪽에서 왼쪽으로만 스와이프 가능
+      direction: DismissDirection.endToStart,
+      // 오른쪽에서 왼쪽으로만 스와이프 가능
       confirmDismiss: (direction) async {
         // 삭제 확인 다이얼로그 표시
         return await _showDeleteConfirmDialog(
