@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/app/constants/app_colors.dart';
 import 'package:lang_mate/core/utils/date_time_util.dart';
+import 'package:lang_mate/core/utils/dialogue_util.dart';
+import 'package:lang_mate/core/utils/snackbar_util.dart';
 import '../../../../../data/model/app_user.dart';
 import '../../../data/model/chat_message.dart';
 import '../../chat_global_view_model.dart';
 import '../../user_global_view_model.dart';
 import '../../widgets/app_cached_image.dart';
+import '../home/home_page.dart';
 import '../profile/user_profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -30,9 +33,9 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToBottom();
+    // });
   }
 
   @override
@@ -42,15 +45,15 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
+  // void _scrollToBottom() {
+  //   if (_scrollController.hasClients) {
+  //     _scrollController.animateTo(
+  //       _scrollController.position.maxScrollExtent,
+  //       duration: Duration(milliseconds: 50),
+  //       curve: Curves.easeOut,
+  //     );
+  //   }
+  // }
 
   void _sendMessage(String text) {
     if (text.trim().isNotEmpty) {
@@ -58,9 +61,9 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
       _messageController.clear();
 
       // Schedule scroll to bottom after the message is added
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
-      });
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   _scrollToBottom();
+      // });
     }
   }
 
@@ -71,6 +74,32 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     if (pickedFile != null) {
       final file = File(pickedFile.path);
       await ref.read(chatGlobalViewModel.notifier).sendImageMessage(file);
+    }
+  }
+
+  void _showLeaveConfirmDialog(BuildContext context) async {
+    final result = await DialogueUtil.showAppCupertinoDialog(
+      context: context,
+      title: '채팅방 나가기',
+      content: '정말로 이 채팅방을 나가시겠습니까?\n채팅 내용이 모두 삭제되며, 이 작업은 되돌릴 수 없습니다.',
+      showCancel: true,
+    );
+
+    if (result == '확인') {
+      final success =
+      await ref.read(chatGlobalViewModel.notifier).leaveChatRoom();
+
+      if (success) {
+        SnackbarUtil.showSnackBar(context, '채팅방에서 나갔습니다.');
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => HomePage()),
+                (route) => false,
+          );
+        }
+      } else {
+        SnackbarUtil.showSnackBar(context, '채팅방 나가기에 실패했습니다.');
+      }
     }
   }
 
@@ -87,15 +116,15 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     }
 
     // Listen for changes to scroll to bottom on new messages
-    ref.listen(chatGlobalViewModel, (previous, current) {
-      print('enter listen page');
-      if (previous?.currentChatRoom?.messages.length !=
-          current.currentChatRoom?.messages.length) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollToBottom();
-        });
-      }
-    });
+    // ref.listen(chatGlobalViewModel, (previous, current) {
+    //   print('enter listen page');
+    //   if (previous?.currentChatRoom?.messages.length !=
+    //       current.currentChatRoom?.messages.length) {
+    //     WidgetsBinding.instance.addPostFrameCallback((_) {
+    //       _scrollToBottom();
+    //     });
+    //   }
+    // });
 
     // Group messages by date for better visualization
     final groupedMessages = _groupMessagesByDate(chatRoom.messages);
@@ -108,9 +137,9 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
             // Messages area
             Expanded(
               child:
-                  chatRoom.messages.isEmpty
-                      ? _buildEmptyChatView()
-                      : _buildMessagesList(groupedMessages, appUser),
+              chatRoom.messages.isEmpty
+                  ? _buildEmptyChatView()
+                  : _buildMessagesList(groupedMessages, appUser),
             ),
             // Message input area
             _buildMessageInput(),
@@ -142,6 +171,8 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: AppColors.appBarGrey,
+      centerTitle: false,
+      titleSpacing: 0,
       title: InkWell(
         onTap: () {
           Navigator.push(
@@ -152,30 +183,78 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
               },
             ),
           );
-          // updateTestDistricts(context);
-          // addDebugUsersFromJson(context);
         },
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              widget.otherUser.name,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            CircleAvatar(
+              radius: 15,
+              child: ClipOval(
+                child: widget.otherUser.profileImage != null
+                    ? AppCachedImage(
+                  imageUrl: widget.otherUser.profileImage!,
+                  width: 30,
+                  height: 30,
+                  fit: BoxFit.cover,
+                )
+                    : const Icon(Icons.person, size: 18),
               ),
             ),
-            Text(
-              '${widget.otherUser.district ?? ''} · ${widget.otherUser.nativeLanguage ?? ''} → ${widget.otherUser.targetLanguage ?? ''}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
+            const SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.otherUser.name,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 1),
+                Text(
+                  '${widget.otherUser.district ?? ''}'/* · ${widget.otherUser.nativeLanguage ?? ''} → ${widget.otherUser.targetLanguage ?? ''}*/,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
+        actions: [
+          PopupMenuButton<String>(
+            color: Colors.white,
+            onSelected: (value) async {
+              if (value == 'leave') {
+                _showLeaveConfirmDialog(context);
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem<String>(
+                  height: 40,
+                  value: 'leave',
+                  child: Row(
+                    children: const [
+                      Icon(Icons.exit_to_app, color: Colors.redAccent, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        '채팅방 나가기',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
+                    ],
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
     );
   }
 
@@ -186,19 +265,19 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
         children: [
           ClipOval(
             child:
-                widget.otherUser.profileImage != null
-                    ? AppCachedImage(
-                      imageUrl: widget.otherUser.profileImage!,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    )
-                    : Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey[200],
-                      child: Icon(Icons.person, size: 40, color: Colors.grey),
-                    ),
+            widget.otherUser.profileImage != null
+                ? AppCachedImage(
+              imageUrl: widget.otherUser.profileImage!,
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+            )
+                : Container(
+              width: 80,
+              height: 80,
+              color: Colors.grey[200],
+              child: Icon(Icons.person, size: 40, color: Colors.grey),
+            ),
           ),
           SizedBox(height: 16),
           Text(
@@ -221,9 +300,9 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   }
 
   Widget _buildMessagesList(
-    Map<String, List<ChatMessage>> groupedMessages,
-    AppUser currentUser,
-  ) {
+      Map<String, List<ChatMessage>> groupedMessages,
+      AppUser currentUser,
+      ) {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(16.0),
@@ -282,42 +361,53 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
     required bool isCurrentUser,
     required bool isFirstInSequence,
   }) {
+    final timeText = DateTimeUtil.formatTimeForMessage(message.createdAt);
+    final bubbleColor = isCurrentUser ? Color(0xFFDCF8C6) : Color(0xFFEFEFEF);
+
     return Padding(
       padding: EdgeInsets.only(top: isFirstInSequence ? 0 : 4, bottom: 4.0),
       child: Row(
         mainAxisAlignment:
-            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Avatar for other user's first message in a sequence
           if (!isCurrentUser && isFirstInSequence)
             ClipOval(
               child:
-                  widget.otherUser.profileImage != null
-                      ? AppCachedImage(
-                        imageUrl: widget.otherUser.profileImage!,
-                        width: 32,
-                        height: 32,
-                        fit: BoxFit.cover,
-                      )
-                      : Container(
-                        width: 32,
-                        height: 32,
-                        color: Colors.grey[200],
-                        child: Icon(Icons.person, size: 20, color: Colors.grey),
-                      ),
+              widget.otherUser.profileImage != null
+                  ? AppCachedImage(
+                imageUrl: widget.otherUser.profileImage!,
+                width: 32,
+                height: 32,
+                fit: BoxFit.cover,
+              )
+                  : Container(
+                width: 32,
+                height: 32,
+                color: Colors.grey[200],
+                child: Icon(Icons.person, size: 20, color: Colors.grey),
+              ),
             )
           else if (!isCurrentUser)
             SizedBox(width: 32), // Placeholder for alignment
 
-          SizedBox(width: 8),
+          if (!isCurrentUser) SizedBox(width: 8),
+
+          if (isCurrentUser)
+            Text(
+              timeText,
+              style: TextStyle(fontSize: 10, color: Colors.grey[700]),
+            ),
+
+          SizedBox(width: 6),
 
           // Message content and timestamp
           Column(
             crossAxisAlignment:
-                isCurrentUser
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
+            isCurrentUser
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
             children: [
               // Name label for first message in sequence
               if (!isCurrentUser && isFirstInSequence)
@@ -330,40 +420,51 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
                 ),
 
               // Message bubble
-              Container(
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.65,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: isCurrentUser ? Color(0xFFDCF8C6) : Color(0xFFEFEFEF),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child:
+              Row(
+                children: [
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.65,
+                    ),
+                    padding: message.isImage
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: bubbleColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child:
                     message.isImage
                         ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: AppCachedImage(
-                            imageUrl: message.content,
-                            width: 200,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
-                        )
+                      borderRadius: BorderRadius.circular(8),
+                      child: InkWell(
+                        onTap: () {
+                          // Implement full-screen image view if needed
+                        },
+                        child: AppCachedImage(
+                          imageUrl: message.content,
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )
                         : Text(message.content, style: TextStyle(fontSize: 15)),
+                  ),
+
+                  SizedBox(width: 6),
+                  if (!isCurrentUser)
+                    Text(
+                      timeText,
+                      style: TextStyle(fontSize: 10, color: Colors.grey[700]),
+                    ),
+                ],
               ),
 
-              // Message timestamp
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0, left: 4.0, right: 4.0),
-                child: Text(
-                  DateTimeUtil.formatTimeForMessage(message.createdAt),
-                  style: TextStyle(fontSize: 10, color: Colors.grey[700]),
-                ),
-              ),
+
             ],
           ),
         ],
@@ -388,7 +489,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
         children: [
           IconButton(
             icon: Icon(Icons.image, color: Colors.grey[700]),
-            onPressed: _pickImage, //이미지 추가
+            onPressed: _pickImage,
           ),
           Expanded(
             child: TextField(
@@ -421,8 +522,8 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
   // Helper method to group messages by date
   Map<String, List<ChatMessage>> _groupMessagesByDate(
-    List<ChatMessage> messages,
-  ) {
+      List<ChatMessage> messages,
+      ) {
     final Map<String, List<ChatMessage>> grouped = {};
 
     for (final message in messages) {
