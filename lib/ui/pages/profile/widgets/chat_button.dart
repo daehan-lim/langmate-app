@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lang_mate/data/model/app_user.dart';
-import 'package:lang_mate/core/utils/ui_util.dart'; // adjust this import to your project
+import 'package:lang_mate/core/utils/ui_util.dart';
 
 class ChatButton extends ConsumerWidget {
   final AppUser user;

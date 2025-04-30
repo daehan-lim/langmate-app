@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lang_mate/core/utils/ui_util.dart';
 import 'package:lang_mate/ui/pages/profile_edit/profile_edit_page.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
@@ -21,18 +21,23 @@ class MyProfileTab extends StatelessWidget {
             AppBar(
               title: Text('나의 프로필'),
               actions: [
-                IconButton(
-                  icon: Icon(Icons.settings),
-                  tooltip: '수정',
-                  onPressed: () {
+                InkWell(
+                  onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) {
-                          return ProfileEditPage(user: user);
-                        },
+                        builder: (context) => ProfileEditPage(user: user),
                       ),
                     );
                   },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: SvgPicture.asset(
+                      'assets/icons/edit_square.svg',
+                      width: 24,
+                      height: 24,
+                      color: const Color(0xFF504347),
+                    ),
+                  ),
                 ),
                 UIUtil.buildLogOutIconButton(
                   context,
