@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lang_mate/data/model/app_user.dart';
 import 'package:lang_mate/ui/widgets/profile_images.dart';
 import 'package:lang_mate/core/utils/dialogue_util.dart';
 import '../../../app/constants/app_constants.dart';
+import '../../../core/utils/snackbar_util.dart';
 import 'edit_profile_view_model.dart';
 
 class ProfileEditPage extends ConsumerStatefulWidget {
@@ -80,14 +82,18 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blueAccent, // Example crimson color
-              onPrimary: Colors.white,    // Text color on primary (e.g. header text)
-              surface: Colors.white,      // Dialog background color
-              onSurface: Colors.black87,  // Default text color
+              primary: Colors.blueAccent,
+              // Example crimson color
+              onPrimary: Colors.white,
+              // Text color on primary (e.g. header text)
+              surface: Colors.white,
+              // Dialog background color
+              onSurface: Colors.black87, // Default text color
             ),
             datePickerTheme: const DatePickerThemeData(
               backgroundColor: Colors.white,
-              headerBackgroundColor: Colors.blueAccent, // crimson
+              headerBackgroundColor: Colors.blueAccent,
+              // crimson
               headerForegroundColor: Colors.white,
               dayForegroundColor: WidgetStatePropertyAll(Colors.black87),
               todayForegroundColor: WidgetStatePropertyAll(Colors.white),
@@ -117,12 +123,14 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     if (confirm != '확인') return;
 
     final vm = ref.read(editProfileViewModelProvider(widget.user).notifier);
+    final stateRead = ref.read(editProfileViewModelProvider(widget.user));
+
     final updatedUser = widget.user.copyWith(
       name: nameController.text,
       nativeLanguage: nativeLanguageController.text,
       targetLanguage: targetLanguageController.text,
-      district: ref.read(editProfileViewModelProvider(widget.user)).district,
-      location: ref.read(editProfileViewModelProvider(widget.user)).location,
+      district: stateRead.district,
+      location: stateRead.location,
       bio: bioController.text,
       partnerPreference: partnerPreferenceController.text,
       languageLearningGoal: languageLearningGoalController.text,
@@ -130,8 +138,34 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     );
 
     await vm.saveProfile(updatedUser);
+    SnackbarUtil.showSnackBar(context, '프로필이 성공적으로 저장되었습니다.');
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
 
-    Navigator.of(context).pop();
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (pickedFile != null) {
+      try {
+        // ViewModel을 통해 이미지 업로드 처리
+        await ref
+            .read(editProfileViewModelProvider(widget.user).notifier)
+            .updateProfileImage(pickedFile);
+
+        SnackbarUtil.showSnackBar(context, '이미지가 성공적으로 업로드되었습니다.');
+      } catch (e) {
+        SnackbarUtil.showSnackBar(
+          context,
+          '이미지 업로드 중 오류가 발생했습니다: ${e.toString()}',
+        );
+      }
+    }
   }
 
   Future<bool> _onWillPop() async {
@@ -146,7 +180,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = ref.watch(editProfileViewModelProvider(widget.user));
+    final state = ref.watch(editProfileViewModelProvider(widget.user));
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -155,21 +189,23 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         appBar: AppBar(
           title: const Text('프로필 수정'),
           actions: [
-            GestureDetector(
-              onTap: _saveProfile,
-              child: Container(
-                width: 50,
-                height: 50,
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(right: 8),
-                child: const Text(
-                  '저장',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            TextButton(
+              onPressed: state.isSaving ? null : _saveProfile,
+              child:
+                  state.isSaving
+                      ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : Text(
+                        '저장',
+                        style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
             ),
           ],
         ),
@@ -179,9 +215,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             child: Column(
               children: [
                 ProfileImages(
-                  profileImageUrl: widget.user.profileImage,
+                  profileImageUrl: state.profileImageUrl,
                   isEditable: true,
-                  onImageTap: () {}, // implement image picker separately
+                  onImageTap: _pickImage,
                 ),
                 const SizedBox(height: 60),
 
@@ -260,7 +296,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                vm.district ?? '지역을 가져오는 중...',
+                                state.district ?? '지역을 가져오는 중...',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.black87,

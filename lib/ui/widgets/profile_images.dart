@@ -32,37 +32,48 @@ class ProfileImages extends StatelessWidget {
         Positioned(
           bottom: -50,
           left: MediaQuery.of(context).size.width / 2 - 50,
-          child: GestureDetector(
-            onTap: isEditable ? onImageTap : null,
-            child: Stack(
-              children: [
-                ClipOval(
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.white,
-                    alignment: Alignment.center,
-                    child: ClipOval(
-                      child: AppCachedImage(
-                        imageUrl: profileImageUrl ?? 'https://picsum.photos/200/200?random=1',
-                        width: 92,
-                        height: 92,
-                        fit: BoxFit.cover,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: isEditable ? onImageTap : null,
+              child: Stack(
+                children: [
+                  ClipOval(
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.white,
+                      alignment: Alignment.center,
+                      child: ClipOval(
+                        child: AppCachedImage(
+                          imageUrl: profileImageUrl ?? 'https://picsum.photos/200/200?random=1',
+                          width: 92,
+                          height: 92,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                if (isEditable)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: Colors.grey.shade200,
-                      child: const Icon(Icons.camera_alt_outlined, size: 16, color: Colors.black54),
+                  if (isEditable)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
