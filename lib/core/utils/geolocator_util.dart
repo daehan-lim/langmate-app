@@ -8,7 +8,7 @@ enum LocationStatus {
 }
 
 
-class GeolocatorUtil {
+abstract class GeolocatorUtil {
   static Future<(LocationStatus, Position?)> getPosition() async {
     try {
       final permission = await Geolocator.checkPermission();

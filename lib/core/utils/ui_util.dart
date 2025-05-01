@@ -11,7 +11,7 @@ import '../../ui/pages/home/home_page.dart';
 import '../../ui/pages/welcome/welcome_page.dart';
 import '../../ui/user_global_view_model.dart';
 
-class UIUtil {
+abstract class UIUtil {
   static Widget buildLogOutIconButton(BuildContext context,
       AuthService authService,) {
     return IconButton(
