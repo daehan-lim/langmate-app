@@ -28,10 +28,12 @@ class ChatDetailPage extends ConsumerStatefulWidget {
 class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late final ChatGlobalViewModel viewModel;
 
   @override
   void initState() {
     super.initState();
+    viewModel = ref.read(chatGlobalViewModel.notifier);
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _scrollToBottom();
     // });
@@ -56,7 +58,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
   void _sendMessage(String text) {
     if (text.trim().isNotEmpty) {
-      ref.read(chatGlobalViewModel.notifier).sendMessage(text);
+      viewModel.sendMessage(text);
       _messageController.clear();
 
       // Schedule scroll to bottom after the message is added
@@ -72,7 +74,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
     if (pickedFile != null) {
       final file = File(pickedFile.path);
-      await ref.read(chatGlobalViewModel.notifier).sendImageMessage(file);
+      await viewModel.sendImageMessage(file);
     }
   }
 
@@ -86,7 +88,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
     if (result == '확인') {
       final success =
-      await ref.read(chatGlobalViewModel.notifier).leaveChatRoom();
+      await viewModel.leaveChatRoom();
 
       if (success) {
         SnackbarUtil.showSnackBar(context, '채팅방에서 나갔습니다.');
