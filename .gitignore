@@ -104,9 +104,9 @@ crashlytics-build.properties
 com_crashlytics_export_strings.xml
 
 # Firebase
-#lib/firebase_options.dart
-#android/app/google-services.json
-#ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 
 
 # VSCode launch configs (optional to ignore)
