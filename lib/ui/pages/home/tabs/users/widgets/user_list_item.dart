@@ -6,11 +6,8 @@ import 'package:lang_mate/ui/pages/profile/user_profile_page.dart';
 import 'package:lang_mate/ui/widgets/app_cached_image.dart';
 
 import '../../../../../../app/constants/app_colors.dart';
-import '../../../../../../core/utils/debug_firestore_add_users.dart';
 import '../../../../../../data/model/app_user.dart';
-import '../../../../../chat_global_view_model.dart';
 import '../../../../../user_global_view_model.dart';
-import '../../../../chat_detail/chat_detail_page.dart';
 import 'list_text_button.dart';
 
 class UserListItem extends StatelessWidget {

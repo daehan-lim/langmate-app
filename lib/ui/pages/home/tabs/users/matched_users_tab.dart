@@ -5,7 +5,6 @@ import 'package:lang_mate/ui/pages/home/tabs/users/widgets/user_list_item.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 
 import '../../../../../app/app_providers.dart';
-import '../../../../../core/utils/ui_util.dart';
 import '../../../../../data/model/app_user.dart';
 import '../../../../widgets/feedback_layout.dart';
 import '../../../../widgets/logout_icon_button.dart';

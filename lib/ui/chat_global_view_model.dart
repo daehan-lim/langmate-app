@@ -29,7 +29,7 @@ class ChatGlobalState {
   }
 }
 
-class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
+class ChatGlobalViewModel extends AutoDisposeNotifier<ChatGlobalState> {
   StreamSubscription<List<ChatRoom>>? _chatRoomsSubscription;
   StreamSubscription<List<ChatMessage>>? _chatMessagesSubscription;
 
@@ -190,6 +190,6 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
 }
 
 final chatGlobalViewModel =
-    NotifierProvider<ChatGlobalViewModel, ChatGlobalState>(
+    AutoDisposeNotifierProvider<ChatGlobalViewModel, ChatGlobalState>(
       () => ChatGlobalViewModel(),
     );

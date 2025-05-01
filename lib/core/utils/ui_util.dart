@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lang_mate/core/services/auth_service.dart';
-import 'package:lang_mate/core/utils/snackbar_util.dart';
 
 import '../../data/model/app_user.dart';
 import '../../ui/chat_global_view_model.dart';
-import '../../ui/pages/auth/login_page.dart';
 import '../../ui/pages/chat_detail/chat_detail_page.dart';
 import '../../ui/pages/home/home_page.dart';
 import '../../ui/pages/welcome/welcome_page.dart';

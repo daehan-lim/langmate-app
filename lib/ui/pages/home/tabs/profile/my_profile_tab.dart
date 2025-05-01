@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:lang_mate/core/utils/ui_util.dart';
 import 'package:lang_mate/ui/pages/profile_edit/profile_edit_page.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 import 'package:lang_mate/ui/widgets/profile_layout.dart';
