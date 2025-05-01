@@ -22,11 +22,7 @@ void main() async {
     // Firebase가 이미 초기화된 경우 무시
   }
 
-  try {
-    await dotenv.load(fileName: '.env');
-  } catch (_) {
-    // .env 파일이 없거나 실패해도 앱 실행에는 영향 없음
-  }
+  await dotenv.load(fileName: '.env');
 
   await initializeDateFormatting('ko', null);
   runApp(const ProviderScope(child: MyApp()));
@@ -47,9 +43,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        Locale('ko'),
-      ],
+      supportedLocales: [Locale('ko')],
       home: const SplashPage(),
     );
   }
