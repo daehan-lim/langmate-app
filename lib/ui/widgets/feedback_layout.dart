@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class MessageLayout extends StatelessWidget {
+class FeedbackLayout extends StatelessWidget {
   final String message;
   final String imageUrl;
 
-  const MessageLayout({super.key, required this.message, required this.imageUrl});
+  const FeedbackLayout({super.key, required this.message, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
