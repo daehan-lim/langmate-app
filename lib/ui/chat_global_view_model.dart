@@ -19,10 +19,12 @@ class ChatGlobalState {
   ChatGlobalState copyWith({
     List<ChatRoom>? chatRooms,
     ChatRoom? currentChatRoom,
+    bool isCurrentRoomNull = false,
   }) {
     return ChatGlobalState(
       chatRooms: chatRooms ?? this.chatRooms,
-      currentChatRoom: currentChatRoom ?? this.currentChatRoom,
+      currentChatRoom:
+          isCurrentRoomNull ? null : currentChatRoom ?? this.currentChatRoom,
     );
   }
 }
@@ -58,7 +60,7 @@ class ChatGlobalViewModel extends Notifier<ChatGlobalState> {
   }
 
   void clearCurrentChat() {
-    state = state.copyWith(currentChatRoom: null);
+    state = state.copyWith(isCurrentRoomNull: true);
   }
 
   Future<void> openChatWithUser(AppUser currentUser, AppUser otherUser) async {

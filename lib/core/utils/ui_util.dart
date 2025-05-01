@@ -12,10 +12,8 @@ import '../../ui/pages/welcome/welcome_page.dart';
 import '../../ui/user_global_view_model.dart';
 
 class UIUtil {
-  static Widget buildLogOutIconButton(
-    BuildContext context,
-    AuthService authService,
-  ) {
+  static Widget buildLogOutIconButton(BuildContext context,
+      AuthService authService,) {
     return IconButton(
       icon: const Padding(
         padding: EdgeInsets.only(right: 5),
@@ -27,7 +25,7 @@ class UIUtil {
           // ignore: use_build_context_synchronously
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const LoginPage()),
-            (route) => false,
+                (route) => false,
           );
         } catch (e) {
           SnackbarUtil.showSnackBar(context, '로그아웃 중 오류가 발생했습니다');
@@ -56,9 +54,9 @@ class UIUtil {
   }) {
     final currentUser = ref.read(userGlobalViewModelProvider);
     if (currentUser != null) {
-      ref
-          .read(chatGlobalViewModel.notifier)
-          .openChatWithUser(currentUser, otherUser);
+      final viewModel = ref.read(chatGlobalViewModel.notifier);
+      viewModel.clearCurrentChat();
+      viewModel.openChatWithUser(currentUser, otherUser);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ChatDetailPage(otherUser)),
