@@ -22,7 +22,7 @@ LangMate는 Flutter로 개발된 언어 교환 파트너 매칭 앱입니다. �
     <img src="images/10.png" width="270" />
     <img src="images/11.png" width="270" />
     <img src="images/12.png" width="270" />
-</div>
+  </div>
 </div>
 
 ## 🎯 주요 기능
@@ -118,4 +118,4 @@ lib/
 
 ## 📄 라이센스
 
-이 프로젝트는 MIT 라이센스 하에 제공됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+이 프로젝트는 MIT 라이센스 하에 제공됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
