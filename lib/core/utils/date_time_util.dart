@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-class DateTimeUtil {
+abstract class DateTimeUtil {
   static String formatForChatList(DateTime dateTime) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);

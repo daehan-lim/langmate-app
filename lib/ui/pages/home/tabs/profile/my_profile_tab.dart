@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:lang_mate/core/utils/ui_util.dart';
 import 'package:lang_mate/ui/pages/profile_edit/profile_edit_page.dart';
 import 'package:lang_mate/ui/user_global_view_model.dart';
 import 'package:lang_mate/ui/widgets/profile_layout.dart';
 
 import '../../../../../app/app_providers.dart';
+import '../../../../widgets/logout_icon_button.dart';
 
 class MyProfileTab extends StatelessWidget {
   const MyProfileTab({super.key});
@@ -39,10 +39,7 @@ class MyProfileTab extends StatelessWidget {
                     ),
                   ),
                 ),
-                UIUtil.buildLogOutIconButton(
-                  context,
-                  ref.read(authServiceProvider),
-                ),
+                LogoutIconButton(authService: ref.read(authServiceProvider)),
               ],
             ),
             ProfileLayout(user: user),

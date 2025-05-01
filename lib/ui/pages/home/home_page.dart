@@ -5,7 +5,6 @@ import 'package:lang_mate/ui/pages/home/tabs/profile/my_profile_tab.dart';
 import 'package:lang_mate/ui/pages/home/tabs/users/matched_users_tab.dart';
 import 'package:lang_mate/ui/pages/home/widgets/home_bottom_navigation_bar.dart';
 
-import '../profile_edit/profile_edit_page.dart';
 import 'home_view_model.dart';
 
 class HomePage extends StatelessWidget {

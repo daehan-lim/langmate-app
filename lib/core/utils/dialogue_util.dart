@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class DialogueUtil {
+abstract class DialogueUtil {
   static /// 앱 팝업 표시
   /// [showCancel]=true면 '네', '이니오' 버튼 2개 표시,
   /// false면 '확인' 버튼만 표시
