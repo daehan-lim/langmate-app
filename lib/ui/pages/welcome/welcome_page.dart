@@ -8,6 +8,7 @@ import '../../../core/utils/snackbar_util.dart';
 import '../../../../app/app_providers.dart';
 import '../../user_global_view_model.dart';
 import '../../widgets/app_cached_image.dart';
+import '../../widgets/logout_icon_button.dart';
 import '../home/home_page.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
@@ -42,8 +43,6 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     final welcomeState = ref.watch(welcomeViewModelProvider);
-    final authService = ref.read(authServiceProvider);
-    // final user = authService.currentUser;
     final user = ref.watch(userGlobalViewModelProvider);
     final welcomeViewModel = ref.read(welcomeViewModelProvider.notifier);
     // 에러 메시지 처리
@@ -56,7 +55,7 @@ class WelcomePageState extends ConsumerState<WelcomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('LangMate'),
-        actions: [UIUtil.buildLogOutIconButton(context, authService)],
+        actions: [LogoutIconButton(authService: ref.read(authServiceProvider)),],
       ),
       body: SafeArea(
         child: Padding(
