@@ -22,18 +22,18 @@ dependencies:
   firebase_auth: ^5.5.2
   google_sign_in: ^6.3.0
   cloud_firestore: ^5.6.6
-  flutter_launcher_icons: ^0.14.3
-  rename_app: ^1.6.3
   image_picker: ^1.1.2
   firebase_storage: ^12.4.5
   intl: ^0.19.0
-  flutter_native_splash: ^2.4.6
   lottie: ^3.3.1
   flutter_localizations:
     sdk: flutter
   flutter_svg: ^2.1.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.3
+  rename_app: ^1.6.3
+  flutter_native_splash: ^2.4.6
   flutter_test:
     sdk: flutter
 
