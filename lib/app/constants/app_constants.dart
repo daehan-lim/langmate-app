@@ -1,4 +1,4 @@
-class AppConstants {
+abstract class AppConstants {
   static const appTitle = 'LangMate';
   static const vworldApiBaseUrl = 'https://api.vworld.kr/req';
   /// 언어 목록
