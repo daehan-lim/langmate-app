@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'constants/app_colors.dart';
 
-class AppTheme {
+abstract class AppTheme {
   static ThemeData buildTheme({Brightness brightness = Brightness.light}) {
     return ThemeData(
       useMaterial3: true,
