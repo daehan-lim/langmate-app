@@ -34,15 +34,15 @@ class LoginViewModel extends Notifier<LoginState> {
         // Exception throw 하지 않으면 로그인했다가 로가웃 하면 로그인 버튼 누르다가 취소히면
         // 로그인이 바로 되는 오류 고치기 위해 임시적으로 다시 throw 구현
         throw Exception('로그인에 실패했습니다. 다시 시도해 주세요');
-        /*// 취소는 오류가 아니므로 예외를 던지지 않음
-        return;*/
+        // // 취소는 오류가 아니므로 예외를 던지지 않음
+        // return;
       }
 
-      final userRepository = ref.read(userRepositoryProvider);
       final userGlobalViewModel = ref.read(userGlobalViewModelProvider.notifier);
       final partialUser = _buildPartialAppUser(firebaseUser);
       userGlobalViewModel.setUser(partialUser);
 
+      final userRepository = ref.read(userRepositoryProvider);
       final fullUser = await userRepository.getUserById(partialUser.id);
       if (fullUser != null) {  // User exists in backend
         print("기존의 사용자 - Firestore에서 정보 가져옴");

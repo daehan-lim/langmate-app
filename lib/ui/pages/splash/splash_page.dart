@@ -14,14 +14,12 @@ class SplashPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(authStateProvider, (prev, next) {
       next.whenData((firebaseUser) async {
-        if (firebaseUser == null) {
-          // Not logged in → go to login page
+        if (firebaseUser == null) { // Not logged in → go to login page
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const LoginPage()),
           );
-        } else {
-          // Logged in → check Firestore profile
+        } else { // Logged in → check Firestore profile
           final appUser = await ref
               .read(userRepositoryProvider)
               .getUserById(firebaseUser.uid);
