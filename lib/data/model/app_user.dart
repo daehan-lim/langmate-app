@@ -5,7 +5,6 @@ class AppUser {
   final String name;
   final DateTime createdAt;
   final String? email;
-  final String? district;
   final String? profileImage;
   final String? nativeLanguage;
   final String? targetLanguage;
@@ -13,6 +12,7 @@ class AppUser {
   final DateTime? birthdate;
   final String? partnerPreference;
   final String? languageLearningGoal;
+  final String? district;
   final GeoPoint? location;
 
   AppUser({
@@ -44,7 +44,6 @@ class AppUser {
 
   AppUser copyWith({
     String? name,
-    String? district,
     DateTime? createdAt,
     String? email,
     String? profileImage,
@@ -54,6 +53,7 @@ class AppUser {
     DateTime? birthdate,
     String? partnerPreference,
     String? languageLearningGoal,
+    String? district,
     GeoPoint? location,
   }) {
     return AppUser(
@@ -61,7 +61,6 @@ class AppUser {
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
       email: email ?? this.email,
-      district: district ?? this.district,
       profileImage: profileImage ?? this.profileImage,
       nativeLanguage: nativeLanguage ?? this.nativeLanguage,
       targetLanguage: targetLanguage ?? this.targetLanguage,
@@ -69,6 +68,7 @@ class AppUser {
       birthdate: birthdate ?? this.birthdate,
       partnerPreference: partnerPreference ?? this.partnerPreference,
       languageLearningGoal: languageLearningGoal ?? this.languageLearningGoal,
+      district: district ?? this.district,
       location: location ?? this.location,
     );
   }
@@ -82,7 +82,6 @@ class AppUser {
               ? DateTime.parse(map['createdAt'])
               : DateTime.now(),
       email: map['email'],
-      district: map['district'],
       profileImage: map['profileImage'],
       nativeLanguage: map['nativeLanguage'],
       targetLanguage: map['targetLanguage'],
@@ -91,6 +90,7 @@ class AppUser {
           map['birthdate'] != null ? DateTime.parse(map['birthdate']) : null,
       partnerPreference: map['partnerPreference'],
       languageLearningGoal: map['languageLearningGoal'],
+      district: map['district'],
       location: map['location'],
     );
   }
@@ -100,7 +100,6 @@ class AppUser {
       'name': name,
       'createdAt': createdAt.toIso8601String(),
       'email': email,
-      'district': district,
       'profileImage': profileImage,
       'nativeLanguage': nativeLanguage,
       'targetLanguage': targetLanguage,
@@ -108,6 +107,7 @@ class AppUser {
       'birthdate': birthdate?.toIso8601String(),
       'partnerPreference': partnerPreference,
       'languageLearningGoal': languageLearningGoal,
+      'district': district,
       'location': location,
     };
   }
