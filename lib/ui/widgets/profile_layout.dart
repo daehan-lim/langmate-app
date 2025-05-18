@@ -54,11 +54,13 @@ class ProfileLayout extends StatelessWidget {
           if (user.district != null)
             Consumer(
               builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final distance = ref
+                    .read(userGlobalViewModelProvider.notifier)
+                    .calculateDistanceFrom(user.location);
                 return _infoTile(
                   icon: Icons.location_on_outlined,
                   title:
-                      '${user.district}  |  ${ref.read(userGlobalViewModelProvider.notifier).
-                      calculateDistanceFrom(user.location) ?? '1.3 km'}',
+                      '${user.district}${user.id != ref.read(userGlobalViewModelProvider)?.id ? '  |  $distance' : ''}',
                 );
               },
             ),
