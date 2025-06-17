@@ -43,19 +43,23 @@ class ProfileImages extends StatelessWidget {
                   height: 100,
                   color: Colors.white,
                   alignment: Alignment.center,
-                  child: isLoading
-                      ? const CupertinoActivityIndicator()
-                      : ClipOval(
-                    child: InkWell(
-                      onTap: isEditable && !isLoading ? onImageTap : null,
-                      child: AppCachedImage(
-                        imageUrl: profileImageUrl ?? 'https://picsum.photos/200/200?random=1',
-                        width: 92,
-                        height: 92,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  child:
+                      isLoading
+                          ? const CupertinoActivityIndicator()
+                          : ClipOval(
+                            child: InkWell(
+                              onTap:
+                                  isEditable && !isLoading ? onImageTap : null,
+                              child: AppCachedImage(
+                                imageUrl:
+                                    profileImageUrl ??
+                                    'https://picsum.photos/200/200?random=1',
+                                width: 92,
+                                height: 92,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                 ),
               ),
               if (isEditable)

@@ -35,7 +35,10 @@ class MyProfileTab extends StatelessWidget {
                       'assets/icons/edit_square.svg',
                       width: 24,
                       height: 24,
-                      color: const Color(0xFF504347),
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF504347),
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
